@@ -1,0 +1,844 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}College Management{% endblock %} | Campus Portal</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Fees CSS -->
+    <link href="{% static 'fees/fees.css' %}" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        /* ==========================================
+           PROFESSIONAL COLLEGE MANAGEMENT THEME
+        ========================================== */
+
+        :root {
+            --campus-ink: #172554;
+            --campus-blue: #2563eb;
+            --campus-purple: #7c3aed;
+            --campus-cyan: #06b6d4;
+            --campus-green: #10b981;
+            --campus-bg: #f3f6ff;
+            --campus-muted: #64748b;
+            --campus-border: #e2e8f0;
+            --campus-white: #ffffff;
+            --campus-shadow: 0 10px 35px rgba(30, 58, 138, .08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            color: #334155;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--campus-bg);
+            background-image:
+                radial-gradient(ellipse at top left, rgba(59, 130, 246, .10), transparent 35%),
+                radial-gradient(ellipse at bottom right, rgba(124, 58, 237, .09), transparent 35%),
+                url("{% static 'images/college-campus.jpg' %}");
+            background-position: center, center, center;
+            background-size: cover, cover, cover;
+            background-attachment: fixed;
+            background-blend-mode: normal, normal, luminosity;
+        }
+
+        /* Soft background overlay */
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: rgba(245, 248, 255, .91);
+            pointer-events: none;
+        }
+
+        /* ==========================================
+           NAVBAR
+        ========================================== */
+
+        .navbar-campus {
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            padding: 13px 0;
+            background: rgba(255, 255, 255, .94);
+            border-bottom: 1px solid rgba(226, 232, 240, .8);
+            box-shadow: 0 4px 25px rgba(23, 43, 77, .06);
+            backdrop-filter: blur(16px);
+        }
+
+        .navbar-brand {
+            font-family: 'Poppins', sans-serif;
+            color: var(--campus-ink) !important;
+            font-size: 1.15rem;
+            letter-spacing: -.5px;
+        }
+
+        .brand-mark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            margin-right: 11px;
+            border-radius: 15px;
+            color: white;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            box-shadow: 0 7px 18px rgba(37, 99, 235, .28);
+            font-size: 22px;
+            transition: transform .25s ease;
+        }
+
+        .navbar-brand:hover .brand-mark {
+            transform: rotate(-5deg) scale(1.05);
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.25;
+        }
+
+        .brand-subtitle {
+            margin-top: 3px;
+            color: #64748b;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .navbar-campus .nav-link {
+            position: relative;
+            padding: 10px 13px !important;
+            border-radius: 9px;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 650;
+            transition: all .2s ease;
+        }
+
+        .navbar-campus .nav-link i {
+            margin-right: 5px;
+            color: #64748b;
+        }
+
+        .navbar-campus .nav-link:hover {
+            color: var(--campus-blue);
+            background: #eff6ff;
+        }
+
+        .navbar-campus .nav-link:hover i {
+            color: var(--campus-blue);
+        }
+
+        .navbar-toggler {
+            padding: 7px 10px;
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+        }
+
+        /* ==========================================
+           BUTTONS
+        ========================================== */
+
+        .btn {
+            border-radius: 10px;
+            font-weight: 650;
+            transition: all .22s ease;
+        }
+
+        .btn-primary {
+            border: none;
+            color: white;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            box-shadow: 0 5px 14px rgba(37, 99, 235, .16);
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            color: white;
+            background: linear-gradient(135deg, #1d4ed8, #6d28d9);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, .25);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-primary {
+            border-color: #bfdbfe;
+            color: #2563eb;
+            background: white;
+        }
+
+        .btn-outline-primary:hover {
+            border-color: #2563eb;
+            color: white;
+            background: #2563eb;
+        }
+
+        .btn-outline-secondary {
+            border-color: #cbd5e1;
+            color: #475569;
+            background: white;
+        }
+
+        .btn-outline-secondary:hover {
+            color: white;
+            background: #334155;
+        }
+
+        .btn-danger {
+            border: none;
+            background: linear-gradient(135deg, #f43f5e, #dc2626);
+        }
+
+        /* ==========================================
+           MAIN CONTENT
+        ========================================== */
+
+        .page-wrap {
+            width: 100%;
+            max-width: 1240px;
+        }
+
+        main {
+            flex: 1;
+            animation: pageFadeIn .45s ease;
+        }
+
+        @keyframes pageFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-heading {
+            color: var(--campus-ink);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 750;
+            letter-spacing: -.7px;
+        }
+
+        .text-primary {
+            color: #2563eb !important;
+        }
+
+        .text-secondary {
+            color: var(--campus-muted) !important;
+        }
+
+        /* ==========================================
+           CARDS
+        ========================================== */
+
+        .card {
+            overflow: hidden;
+            border: 1px solid rgba(226, 232, 240, .85);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .96);
+            box-shadow: var(--campus-shadow);
+            transition: box-shadow .25s ease, transform .25s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(30, 58, 138, .13);
+        }
+
+        /* ==========================================
+           FORMS
+        ========================================== */
+
+        .form-label,
+        label {
+            margin-bottom: 7px;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        form p {
+            margin-bottom: 1rem;
+        }
+
+        form input:not([type=checkbox]):not([type=radio]):not([type=file]),
+        form select,
+        form textarea {
+            display: block;
+            width: 100%;
+            min-height: 45px;
+            padding: 11px 14px;
+            border: 1px solid #dbe3f0;
+            border-radius: 10px;
+            outline: none;
+            color: #1e293b;
+            background: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        form input[type=file] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dbe3f0;
+            border-radius: 10px;
+            background: #fff;
+            font-size: 13px;
+        }
+
+        form input[type=checkbox],
+        form input[type=radio] {
+            accent-color: #2563eb;
+        }
+
+        form input:focus,
+        form select:focus,
+        form textarea:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, .10);
+        }
+
+        .helptext,
+        .form-text {
+            display: block;
+            margin-top: 5px;
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        .errorlist {
+            margin: 5px 0 10px;
+            padding-left: 18px;
+            color: #dc2626;
+            font-size: 12px;
+        }
+
+        /* ==========================================
+           TABLES
+        ========================================== */
+
+        .table {
+            --bs-table-bg: transparent;
+            vertical-align: middle;
+        }
+
+        .table thead th {
+            padding-top: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #64748b;
+            background: #f8faff;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .7px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .table > :not(caption) > * > * {
+            padding: 14px 13px;
+            border-bottom-color: #edf2f7;
+        }
+
+        .table tbody tr {
+            transition: background .18s ease;
+        }
+
+        .table tbody tr:hover > * {
+            background-color: #f4f7ff;
+        }
+
+        .table tbody td {
+            color: #334155;
+            font-size: 13px;
+        }
+
+        /* ==========================================
+           DETAIL LABELS
+        ========================================== */
+
+        .detail-label {
+            margin-bottom: 5px;
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: 750;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            color: var(--campus-ink);
+            font-size: 14px;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        /* ==========================================
+           BADGES
+        ========================================== */
+
+        .badge {
+            padding: 7px 11px;
+            font-weight: 700;
+            letter-spacing: .2px;
+        }
+
+        .text-bg-success-subtle {
+            color: #047857 !important;
+            background: #d1fae5 !important;
+        }
+
+        .text-bg-primary-subtle {
+            color: #1d4ed8 !important;
+            background: #dbeafe !important;
+        }
+
+        /* ==========================================
+           ALERTS
+        ========================================== */
+
+        .alert {
+            border: 1px solid transparent;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+
+        .alert-success {
+            border-color: #a7f3d0;
+            color: #065f46;
+            background: #ecfdf5;
+        }
+
+        .alert-danger {
+            border-color: #fecdd3;
+            color: #9f1239;
+            background: #fff1f2;
+        }
+
+        .alert-warning {
+            border-color: #fde68a;
+            color: #92400e;
+            background: #fffbeb;
+        }
+
+        .alert-info {
+            border-color: #bae6fd;
+            color: #075985;
+            background: #f0f9ff;
+        }
+
+        /* ==========================================
+           FOOTER
+        ========================================== */
+
+        .campus-footer {
+            position: relative;
+            margin-top: 35px;
+            padding: 27px 15px;
+            border-top: 1px solid rgba(226, 232, 240, .9);
+            color: #64748b;
+            background: rgba(255, 255, 255, .9);
+            backdrop-filter: blur(12px);
+        }
+
+        .footer-brand {
+            color: #334155;
+            font-weight: 750;
+        }
+
+        .footer-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            margin: 0 3px;
+            border-radius: 10px;
+            color: #2563eb;
+            background: #eff6ff;
+            transition: all .2s ease;
+        }
+
+        .footer-icon:hover {
+            color: white;
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        /* ==========================================
+           RESPONSIVE DESIGN
+        ========================================== */
+
+        @media (max-width: 991px) {
+            .navbar-campus .navbar-nav {
+                align-items: stretch !important;
+                padding-top: 12px;
+            }
+
+            .navbar-campus .nav-link {
+                padding: 12px !important;
+            }
+
+            .navbar-campus .btn {
+                margin: 8px 0 0 !important;
+                padding: 10px 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-campus {
+                padding: 9px 0;
+            }
+
+            .brand-mark {
+                width: 40px;
+                height: 40px;
+                margin-right: 8px;
+                border-radius: 12px;
+            }
+
+            .navbar-brand {
+                font-size: 1rem;
+            }
+
+            .brand-subtitle {
+                font-size: 9px;
+            }
+
+            main.container {
+                padding-top: 24px !important;
+                padding-bottom: 24px !important;
+            }
+
+            .card {
+                border-radius: 14px;
+            }
+
+            .table > :not(caption) > * > * {
+                padding: 11px 10px;
+            }
+
+            .campus-footer {
+                margin-top: 15px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- ==========================================
+         NAVIGATION BAR
+    ========================================== -->
+
+    <nav class="navbar navbar-expand-lg navbar-campus">
+
+        <div class="container page-wrap">
+
+            <a class="navbar-brand d-flex align-items-center fw-semibold text-decoration-none"
+               href="{% url 'home' %}">
+
+                <span class="brand-mark">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </span>
+
+                <span class="brand-text">
+                    Campus Portal
+                    <span class="brand-subtitle">Learn · Grow · Succeed</span>
+                </span>
+
+            </a>
+
+
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNav"
+                    aria-controls="mainNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+
+            <div class="collapse navbar-collapse" id="mainNav">
+
+                <div class="navbar-nav ms-auto align-items-lg-center gap-lg-1 py-2 py-lg-0">
+
+                    {% if user.is_authenticated %}
+
+                        <a class="nav-link" href="{% url 'dashboard' %}">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            Dashboard
+                        </a>
+
+                        <a class="nav-link" href="{% url 'student_list' %}">
+                            <i class="fa-solid fa-user-graduate"></i>
+                            Students
+                        </a>
+
+                        <a class="nav-link" href="{% url 'admission_list' %}">
+                            <i class="fa-solid fa-file-signature"></i>
+                            Admissions
+                        </a>
+
+                        <a class="nav-link" href="{% url 'fees:dashboard' %}">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                            Fees
+                        </a>
+
+                        <a class="nav-link" href="{% url 'hostel:dashboard' %}">
+                            <i class="fa-solid fa-building"></i>
+                            Hostel
+                        </a>
+
+                        <div class="nav-item dropdown ms-lg-2">
+
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                               href="#"
+                               id="accountDropdown"
+                               role="button"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">
+
+                                <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white"
+                                      style="width:34px;height:34px;background:linear-gradient(135deg,#2563eb,#7c3aed);">
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                </span>
+
+                                <span>{{ user.first_name|default:user.username }}</span>
+
+                            </a>
+
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg p-2"
+                                aria-labelledby="accountDropdown"
+                                style="min-width:220px;border-radius:14px;">
+
+                                <li class="px-3 py-2">
+
+                                    <div class="fw-bold text-dark">
+                                        {{ user.first_name|default:user.username }}
+                                    </div>
+
+                                    <div class="small text-secondary">
+                                        {{ user.email|default:"College Portal User" }}
+                                    </div>
+
+                                    <span class="badge rounded-pill text-bg-primary-subtle mt-2">
+                                        {{ user.get_role_display|default:user.role }}
+                                    </span>
+
+                                </li>
+
+                                <li><hr class="dropdown-divider"></li>
+
+                                <li>
+                                    <a class="dropdown-item rounded-2 py-2"
+                                       href="{% url 'dashboard' %}">
+                                        <i class="fa-solid fa-gauge-high me-2 text-primary"></i>
+                                        My Dashboard
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item rounded-2 py-2 text-danger"
+                                       href="{% url 'logout' %}">
+                                        <i class="fa-solid fa-right-from-bracket me-2"></i>
+                                        Sign out
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+                    {% else %}
+
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            Sign in
+                        </a>
+
+                        <a class="btn btn-primary btn-sm px-4 py-2 ms-lg-2"
+                           href="{% url 'register' %}">
+
+                            <i class="fa-solid fa-user-plus me-1"></i>
+                            Create account
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="container page-wrap py-4 py-md-5">
+
+        <!-- Django Messages -->
+
+        {% if messages %}
+
+            <div class="mb-4" aria-live="polite">
+
+                {% for message in messages %}
+
+                    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %} alert-dismissible fade show d-flex align-items-start gap-2"
+                         role="alert">
+
+                        <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% elif message.tags == 'error' %}fa-circle-exclamation{% elif message.tags == 'warning' %}fa-triangle-exclamation{% else %}fa-circle-info{% endif %} mt-1"></i>
+
+                        <div class="flex-grow-1">
+                            {{ message }}
+                        </div>
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert"
+                                aria-label="Close">
+                        </button>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- Individual Page Content -->
+
+        {% block content %}{% endblock %}
+
+    </main>
+
+
+    <!-- ==========================================
+         FOOTER
+    ========================================== -->
+
+    <footer class="campus-footer mt-auto">
+
+        <div class="container page-wrap">
+
+            <div class="row align-items-center gy-3">
+
+                <div class="col-12 col-md-6 text-center text-md-start">
+
+                    <div class="footer-brand mb-1">
+                        <i class="fa-solid fa-graduation-cap text-primary me-2"></i>
+                        Campus Portal
+                    </div>
+
+                    <div class="small">
+                        Empowering education through technology.
+                    </div>
+
+                </div>
+
+
+                <div class="col-12 col-md-6 text-center text-md-end">
+
+                    <div class="mb-2">
+
+                        <span class="footer-icon" title="Education">
+                            <i class="fa-solid fa-book-open"></i>
+                        </span>
+
+                        <span class="footer-icon" title="Students">
+                            <i class="fa-solid fa-users"></i>
+                        </span>
+
+                        <span class="footer-icon" title="Security">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </span>
+
+                    </div>
+
+                    <div class="small">
+                        &copy; {% now "Y" %} College Management System.
+                        All rights reserved.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- Bootstrap JavaScript -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Font Awesome Icons -->
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

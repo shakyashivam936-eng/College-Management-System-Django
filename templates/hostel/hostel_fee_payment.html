@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Hostel Fee Payment</title>
+
+</head>
+
+<body>
+
+<h1>Hostel Fee Payment</h1>
+
+<p>
+    Student:
+    <strong>
+        {{ hostel_fee.allocation.student.first_name }}
+        {{ hostel_fee.allocation.student.last_name }}
+    </strong>
+</p>
+
+<p>
+    Hostel:
+    {{ hostel_fee.allocation.bed.room.hostel.name }}
+</p>
+
+<p>
+    Room:
+    {{ hostel_fee.allocation.bed.room.room_number }}
+</p>
+
+<p>
+    Month:
+    {{ hostel_fee.month|date:"F Y" }}
+</p>
+
+<hr>
+
+<p>
+    Total Fee:
+    ₹{{ hostel_fee.amount }}
+</p>
+
+<p>
+    Paid:
+    ₹{{ hostel_fee.paid_amount }}
+</p>
+
+<p>
+    Balance:
+    <strong>
+        ₹{{ hostel_fee.balance_amount }}
+    </strong>
+</p>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    {{ form.non_field_errors }}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        Pay Hostel Fee
+    </button>
+
+</form>
+
+<br>
+
+<a href="{% url 'hostel:allocation_detail' hostel_fee.allocation.pk %}">
+    Cancel
+</a>
+
+</body>
+
+</html>

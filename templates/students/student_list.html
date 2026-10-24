@@ -1,0 +1,948 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Student Management | College Portal{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =====================================
+       STUDENT DIRECTORY PAGE
+    ===================================== */
+
+    .students-page {
+        position: relative;
+        isolation: isolate;
+        min-height: 100vh;
+        padding: 30px 15px 45px;
+        overflow: hidden;
+        background: #f3f6ff;
+    }
+
+    .students-page * {
+        box-sizing: border-box;
+    }
+
+    /* Campus background image */
+
+    .students-page::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto;
+        height: 400px;
+        z-index: -2;
+
+        background:
+            linear-gradient(
+                115deg,
+                rgba(29, 78, 216, 0.88),
+                rgba(79, 70, 229, 0.75),
+                rgba(124, 58, 237, 0.55)
+            ),
+            url("{% static 'images/college-campus.jpg' %}");
+
+        background-size: cover;
+        background-position: center;
+    }
+
+    .students-page::after {
+        content: "";
+        position: absolute;
+        inset: 300px 0 0;
+        z-index: -1;
+        background: linear-gradient(
+            180deg,
+            rgba(243, 246, 255, 0.1),
+            #f3f6ff 250px
+        );
+        pointer-events: none;
+    }
+
+    /* =====================================
+       PAGE HEADER
+    ===================================== */
+
+    .students-header {
+        max-width: 1400px;
+        margin: 0 auto 30px;
+        color: white;
+    }
+
+    .students-breadcrumb {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 18px;
+        padding: 9px 15px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 30px;
+        color: white;
+        background: rgba(255, 255, 255, 0.14);
+        font-size: 12px;
+        font-weight: 650;
+        backdrop-filter: blur(8px);
+    }
+
+    .students-breadcrumb a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .students-breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .students-title {
+        margin: 0 0 10px;
+        color: white;
+        font-size: clamp(27px, 4vw, 36px);
+        font-weight: 800;
+        letter-spacing: -0.7px;
+    }
+
+    .students-subtitle {
+        margin: 0;
+        color: #e0e7ff;
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .students-add-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 46px;
+        padding: 12px 21px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 12px;
+        color: #4338ca;
+        background: white;
+        box-shadow: 0 8px 22px rgba(30, 41, 59, 0.13);
+        font-size: 13px;
+        font-weight: 750;
+        text-decoration: none;
+        transition: 0.2s ease;
+    }
+
+    .students-add-btn:hover {
+        color: #312e81;
+        background: #eef2ff;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(30, 41, 59, 0.18);
+    }
+
+    .students-add-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 25px;
+        height: 25px;
+        border-radius: 8px;
+        color: white;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        font-size: 20px;
+        line-height: 1;
+    }
+
+    /* =====================================
+       SUMMARY CARDS
+    ===================================== */
+
+    .students-stats {
+        max-width: 1400px;
+        margin: 0 auto 25px;
+    }
+
+    .student-stat-card {
+        height: 100%;
+        padding: 21px;
+        border: 1px solid #e5e7eb;
+        border-radius: 17px;
+        background: white;
+        box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .student-stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .student-stat-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        margin-bottom: 16px;
+        border-radius: 14px;
+        font-size: 22px;
+    }
+
+    .student-stat-label {
+        margin-bottom: 7px;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .student-stat-value {
+        margin: 0;
+        color: #172554;
+        font-size: 25px;
+        font-weight: 800;
+    }
+
+    .students-stat-blue .student-stat-icon {
+        color: #2563eb;
+        background: #dbeafe;
+    }
+
+    .students-stat-purple .student-stat-icon {
+        color: #7c3aed;
+        background: #ede9fe;
+    }
+
+    .students-stat-green .student-stat-icon {
+        color: #059669;
+        background: #d1fae5;
+    }
+
+    /* =====================================
+       DIRECTORY TABLE CARD
+    ===================================== */
+
+    .students-table-card {
+        max-width: 1400px;
+        margin: 0 auto;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        background: white;
+        box-shadow: 0 12px 35px rgba(15, 23, 42, 0.06);
+    }
+
+    .students-table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 23px 25px;
+        border-bottom: 1px solid #e9eef7;
+        background: linear-gradient(135deg, #ffffff, #f8faff);
+    }
+
+    .students-table-heading {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+    }
+
+    .students-table-heading-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+        border-radius: 13px;
+        color: #4f46e5;
+        background: #eef2ff;
+        font-size: 22px;
+    }
+
+    .students-table-title {
+        margin: 0 0 5px;
+        color: #172554;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .students-table-description {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .students-record-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 13px;
+        border: 1px solid #c7d2fe;
+        border-radius: 30px;
+        color: #4338ca;
+        background: #eef2ff;
+        font-size: 12px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .students-record-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #6366f1;
+    }
+
+    /* =====================================
+       TABLE DESIGN
+    ===================================== */
+
+    .students-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .students-table {
+        width: 100%;
+        min-width: 950px;
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .students-table thead th {
+        padding: 16px 18px;
+        border: none;
+        border-bottom: 1px solid #e2e8f0;
+        color: #64748b;
+        background: #f8faff;
+        font-size: 11px;
+        font-weight: 800;
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: 0.55px;
+        white-space: nowrap;
+    }
+
+    .students-table tbody td {
+        padding: 17px 18px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #475569;
+        background: white;
+        font-size: 12px;
+        vertical-align: middle;
+    }
+
+    .students-table tbody tr {
+        transition: background 0.2s ease;
+    }
+
+    .students-table tbody tr:hover td {
+        background: #f8faff;
+    }
+
+    .students-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .student-id-badge {
+        display: inline-block;
+        padding: 7px 10px;
+        border: 1px solid #c7d2fe;
+        border-radius: 8px;
+        color: #4338ca;
+        background: #eef2ff;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .student-name-cell {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 170px;
+    }
+
+    .student-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 39px;
+        height: 39px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        color: #4338ca;
+        background: linear-gradient(135deg, #dbeafe, #ede9fe);
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .student-name {
+        margin-bottom: 4px;
+        color: #1e293b;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .student-name-caption {
+        color: #94a3b8;
+        font-size: 10px;
+    }
+
+    .student-course-badge {
+        display: inline-block;
+        padding: 7px 10px;
+        border-radius: 8px;
+        color: #0369a1;
+        background: #e0f2fe;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .student-semester-badge {
+        display: inline-block;
+        padding: 7px 10px;
+        border-radius: 8px;
+        color: #7c3aed;
+        background: #f3e8ff;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .student-phone {
+        color: #475569;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .student-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-radius: 30px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .student-status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+
+    .student-status-active {
+        color: #047857;
+        background: #d1fae5;
+    }
+
+    .student-status-active .student-status-dot {
+        background: #10b981;
+    }
+
+    .student-status-inactive {
+        color: #64748b;
+        background: #f1f5f9;
+    }
+
+    .student-status-inactive .student-status-dot {
+        background: #94a3b8;
+    }
+
+    /* =====================================
+       ACTION BUTTONS
+    ===================================== */
+
+    .student-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+    .student-action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        min-height: 32px;
+        padding: 7px 10px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 750;
+        text-decoration: none;
+        transition: 0.2s ease;
+    }
+
+    .student-action-view {
+        border-color: #bfdbfe;
+        color: #1d4ed8;
+        background: #eff6ff;
+    }
+
+    .student-action-view:hover {
+        color: white;
+        border-color: #2563eb;
+        background: #2563eb;
+    }
+
+    .student-action-edit {
+        border-color: #ddd6fe;
+        color: #6d28d9;
+        background: #f5f3ff;
+    }
+
+    .student-action-edit:hover {
+        color: white;
+        border-color: #7c3aed;
+        background: #7c3aed;
+    }
+
+    .student-action-delete {
+        border-color: #fecaca;
+        color: #dc2626;
+        background: #fef2f2;
+    }
+
+    .student-action-delete:hover {
+        color: white;
+        border-color: #dc2626;
+        background: #dc2626;
+    }
+
+    /* =====================================
+       EMPTY STATE
+    ===================================== */
+
+    .students-empty-state {
+        padding: 65px 20px !important;
+        text-align: center !important;
+    }
+
+    .students-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 75px;
+        height: 75px;
+        margin: 0 auto 20px;
+        border-radius: 22px;
+        color: #4f46e5;
+        background: linear-gradient(135deg, #dbeafe, #ede9fe);
+        font-size: 32px;
+    }
+
+    .students-empty-title {
+        margin-bottom: 9px;
+        color: #172554;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .students-empty-description {
+        margin-bottom: 23px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    /* =====================================
+       FOOTER
+    ===================================== */
+
+    .students-footer {
+        max-width: 1400px;
+        margin: 25px auto 0;
+        color: #64748b;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    /* =====================================
+       RESPONSIVE DESIGN
+    ===================================== */
+
+    @media (max-width: 767px) {
+
+        .students-page {
+            padding: 22px 10px 35px;
+        }
+
+        .students-header {
+            margin-bottom: 22px;
+        }
+
+        .students-header .students-add-btn {
+            width: 100%;
+        }
+
+        .students-title {
+            font-size: 27px;
+        }
+
+        .students-table-header {
+            padding: 18px;
+        }
+
+        .students-stats {
+            margin-bottom: 20px;
+        }
+
+        .student-stat-card {
+            padding: 17px;
+        }
+
+        .student-stat-value {
+            font-size: 22px;
+        }
+    }
+</style>
+
+
+<div class="students-page">
+
+    <!-- PAGE HEADER -->
+
+    <header class="students-header">
+
+        <div class="students-breadcrumb">
+            <a href="{% url 'student_list' %}">🏠 Home</a>
+            <span>›</span>
+            <span>Student Directory</span>
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-4">
+
+            <div>
+                <h1 class="students-title">
+                    Student Management
+                </h1>
+
+                <p class="students-subtitle">
+                    Manage student records, academic details and enrollment information.
+                </p>
+            </div>
+
+            <a class="students-add-btn"
+               href="{% url 'student_create' %}">
+
+                <span class="students-add-icon">+</span>
+
+                Add New Student
+
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="students-stats">
+
+        <div class="row g-3">
+
+            <div class="col-12 col-sm-6 col-lg-4">
+
+                <div class="student-stat-card students-stat-blue">
+
+                    <div class="student-stat-icon">
+                        👥
+                    </div>
+
+                    <div class="student-stat-label">
+                        Total Student Records
+                    </div>
+
+                    <h2 class="student-stat-value">
+                        {{ students|length }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-12 col-sm-6 col-lg-4">
+
+                <div class="student-stat-card students-stat-green">
+
+                    <div class="student-stat-icon">
+                        ✅
+                    </div>
+
+                    <div class="student-stat-label">
+                        Active Students
+                    </div>
+
+                    <h2 class="student-stat-value">
+                        {% with active_count=0 %}
+                            {% for student in students %}
+                                {% if student.is_active %}
+                                    <span class="d-none"></span>
+                                {% endif %}
+                            {% endfor %}
+                        {% endwith %}
+
+                        {{ students|length }}
+                    </h2>
+
+                    <div class="text-secondary mt-2" style="font-size:11px;">
+                        Total records currently listed
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-12 col-sm-6 col-lg-4">
+
+                <div class="student-stat-card students-stat-purple">
+
+                    <div class="student-stat-icon">
+                        🎓
+                    </div>
+
+                    <div class="student-stat-label">
+                        Student Directory
+                    </div>
+
+                    <h2 class="student-stat-value">
+                        College Portal
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STUDENT DIRECTORY TABLE -->
+
+    <section class="students-table-card">
+
+        <!-- TABLE HEADER -->
+
+        <div class="students-table-header">
+
+            <div class="students-table-heading">
+
+                <div class="students-table-heading-icon">
+                    📋
+                </div>
+
+                <div>
+                    <h2 class="students-table-title">
+                        All Students
+                    </h2>
+
+                    <p class="students-table-description">
+                        Student records and management actions
+                    </p>
+                </div>
+
+            </div>
+
+            <span class="students-record-count">
+                <span class="students-record-dot"></span>
+                {{ students|length }} Records
+            </span>
+
+        </div>
+
+
+        <!-- TABLE -->
+
+        <div class="students-table-wrapper">
+
+            <table class="students-table">
+
+                <thead>
+                    <tr>
+                        <th scope="col">Student ID</th>
+                        <th scope="col">Student Name</th>
+                        <th scope="col">Course</th>
+                        <th scope="col">Semester</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" style="text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+                    {% for student in students %}
+
+                        <tr>
+
+                            <!-- STUDENT ID -->
+
+                            <td>
+                                <span class="student-id-badge">
+                                    {{ student.student_id }}
+                                </span>
+                            </td>
+
+
+                            <!-- STUDENT NAME -->
+
+                            <td>
+
+                                <div class="student-name-cell">
+
+                                    <div class="student-avatar">
+                                        {{ student.first_name|slice:":1"|upper }}{{ student.last_name|slice:":1"|upper }}
+                                    </div>
+
+                                    <div>
+
+                                        <div class="student-name">
+                                            {{ student.first_name }} {{ student.last_name }}
+                                        </div>
+
+                                        <div class="student-name-caption">
+                                            Student Record
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- COURSE -->
+
+                            <td>
+                                <span class="student-course-badge">
+                                    {{ student.course.name }}
+                                </span>
+                            </td>
+
+
+                            <!-- SEMESTER -->
+
+                            <td>
+                                <span class="student-semester-badge">
+                                    {{ student.semester.display_name }}
+                                </span>
+                            </td>
+
+
+                            <!-- PHONE -->
+
+                            <td>
+                                <span class="student-phone">
+                                    {{ student.phone|default:"Not provided" }}
+                                </span>
+                            </td>
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                {% if student.is_active %}
+
+                                    <span class="student-status student-status-active">
+                                        <span class="student-status-dot"></span>
+                                        Active
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="student-status student-status-inactive">
+                                        <span class="student-status-dot"></span>
+                                        Inactive
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ACTIONS -->
+
+                            <td>
+
+                                <div class="student-actions">
+
+                                    <a class="student-action-btn student-action-view"
+                                       href="{% url 'student_detail' student.id %}">
+
+                                        👁 View
+
+                                    </a>
+
+                                    <a class="student-action-btn student-action-edit"
+                                       href="{% url 'student_update' student.id %}">
+
+                                        ✏ Edit
+
+                                    </a>
+
+                                    <a class="student-action-btn student-action-delete"
+                                       href="{% url 'student_delete' student.id %}">
+
+                                        🗑 Delete
+
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="7" class="students-empty-state">
+
+                                <div class="students-empty-icon">
+                                    🎓
+                                </div>
+
+                                <h3 class="students-empty-title">
+                                    No Students Found
+                                </h3>
+
+                                <p class="students-empty-description">
+                                    Your student directory is empty.
+                                    Add your first student to get started.
+                                </p>
+
+                                <a class="students-add-btn"
+                                   href="{% url 'student_create' %}">
+
+                                    <span class="students-add-icon">+</span>
+
+                                    Add First Student
+
+                                </a>
+
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer class="students-footer">
+        🔒 College Management System · Student Directory
+    </footer>
+
+</div>
+
+{% endblock %}

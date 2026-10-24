@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Fee management{% endblock %}
+
+{% block content %}
+<div class="fees-page">
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-3 mb-4">
+    <div>
+        <p class="text-primary fw-semibold text-uppercase small mb-2">Finance</p>
+        <h1 class="page-heading h2 mb-1">Fee management</h1>
+        <p class="text-secondary mb-0">Manage fee plans and student balances.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-outline-primary" href="{% url 'fees:student_fee_create' %}">Assign fee</a>
+        <a class="btn btn-primary" href="{% url 'fees:fee_structure_create' %}">Create fee structure</a>
+    </div>
+</div>
+
+<section class="card fee-table-card overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
+        <h2 class="h6 fw-semibold mb-0">Fee structures</h2>
+        <span class="badge rounded-pill text-bg-light">{{ fee_structures|length }} plans</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle fee-table mb-0">
+            <thead class="table-light"><tr><th>Course</th><th>Semester</th><th>Academic year</th><th>Tuition</th><th>Other fees</th><th>Total</th><th>Status</th></tr></thead>
+            <tbody>
+                {% for structure in fee_structures %}
+                    <tr>
+                        <td class="fw-semibold">{{ structure.course.name }}</td>
+                        <td>{{ structure.semester.display_name }}</td>
+                        <td>{{ structure.academic_year }}</td>
+                        <td>₹{{ structure.tuition_fee|floatformat:2 }}</td>
+                        <td>₹{{ structure.exam_fee|add:structure.library_fee|add:structure.hostel_fee|add:structure.other_fee|floatformat:2 }}</td>
+                        <td class="fw-semibold">₹{{ structure.total_fee|floatformat:2 }}</td>
+                        <td>{% if structure.is_active %}<span class="badge rounded-pill text-bg-success-subtle text-success-emphasis">Active</span>{% else %}<span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">Inactive</span>{% endif %}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7" class="py-5 text-center"><div class="fw-semibold">No fee structures yet</div><div class="text-secondary small mt-1">Create a fee structure to get started.</div></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="card fee-table-card overflow-hidden mt-4">
+    <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
+        <h2 class="h6 fw-semibold mb-0">Fees assigned to students</h2>
+        <span class="badge rounded-pill text-bg-light">{{ student_fees|length }} accounts</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle fee-table mb-0">
+            <thead class="table-light"><tr><th>Student</th><th>Course / semester</th><th>Due date</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+            <tbody>
+                {% for student_fee in student_fees %}
+                    <tr>
+                        <td><div class="fw-semibold">{{ student_fee.student.first_name }} {{ student_fee.student.last_name }}</div><div class="small text-secondary">{{ student_fee.student.student_id }}</div></td>
+                        <td>{{ student_fee.fee_structure.course.name }}<div class="small text-secondary">{{ student_fee.fee_structure.semester.display_name }}</div></td>
+                        <td class="text-nowrap">{{ student_fee.due_date|date:'M j, Y' }}</td>
+                        <td class="fee-amount">₹{{ student_fee.total_amount|floatformat:2 }}</td>
+                        <td class="fee-amount">₹{{ student_fee.paid_amount|floatformat:2 }}</td>
+                        <td class="fee-amount fee-balance">₹{{ student_fee.balance_amount|floatformat:2 }}</td>
+                        <td><span class="badge rounded-pill {% if student_fee.status == 'PAID' %}text-bg-success-subtle text-success-emphasis{% elif student_fee.status == 'PARTIAL' %}text-bg-primary-subtle text-primary-emphasis{% else %}text-bg-warning-subtle text-warning-emphasis{% endif %}">{{ student_fee.get_status_display }}</span></td>
+                        <td class="text-end text-nowrap"><a class="btn btn-sm btn-light" href="{% url 'fees:student_fee_detail' student_fee.id %}">Details</a>{% if student_fee.balance_amount > 0 %} <a class="btn btn-sm btn-primary fee-action" href="{% url 'fees:make_payment' student_fee.id %}">Pay now</a>{% endif %}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8" class="py-5 text-center"><div class="fw-semibold">No student fees assigned</div><div class="text-secondary small mt-1">Assign a fee structure to a student to record payments.</div></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+</div>
+{% endblock %}

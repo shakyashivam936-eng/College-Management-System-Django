@@ -1,0 +1,548 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Receipt {{ payment.receipt_number }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .receipt-page {
+        position: relative;
+        min-height: 100vh;
+        padding: 45px 15px;
+        overflow: hidden;
+        background:
+            linear-gradient(135deg, rgba(13, 27, 62, 0.92), rgba(65, 45, 125, 0.86)),
+            url('/static/images/fee-receipt-bg.jpg') center/cover no-repeat;
+        border-radius: 18px;
+    }
+
+    .receipt-page::before,
+    .receipt-page::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        filter: blur(2px);
+    }
+
+    .receipt-page::before {
+        width: 280px;
+        height: 280px;
+        top: -90px;
+        right: -70px;
+        background: rgba(77, 208, 225, 0.16);
+    }
+
+    .receipt-page::after {
+        width: 350px;
+        height: 350px;
+        bottom: -150px;
+        left: -100px;
+        background: rgba(255, 193, 7, 0.12);
+    }
+
+    .receipt-container {
+        position: relative;
+        z-index: 1;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .receipt-card {
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.97);
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+    }
+
+    .receipt-header {
+        position: relative;
+        padding: 32px;
+        color: #fff;
+        background: linear-gradient(120deg, #4338ca, #2563eb, #0891b2);
+    }
+
+    .receipt-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        padding: 7px 13px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.13);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+
+    .receipt-check {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.18);
+        font-size: 34px;
+        font-weight: 700;
+    }
+
+    .receipt-number {
+        font-size: clamp(21px, 4vw, 30px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        overflow-wrap: anywhere;
+    }
+
+    .receipt-subtitle {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 14px;
+    }
+
+    .receipt-status {
+        display: inline-block;
+        padding: 9px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 50px;
+        background: rgba(22, 163, 74, 0.2);
+        color: #dcfce7;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+    }
+
+    .receipt-body {
+        padding: 32px;
+    }
+
+    .amount-panel {
+        position: relative;
+        overflow: hidden;
+        padding: 25px;
+        border: 1px solid #bfdbfe;
+        border-radius: 18px;
+        background: linear-gradient(120deg, #eff6ff, #ecfeff);
+    }
+
+    .amount-label {
+        color: #475569;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .amount-value {
+        margin-top: 8px;
+        color: #1d4ed8;
+        font-size: clamp(30px, 5vw, 42px);
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    .detail-card {
+        height: 100%;
+        padding: 18px;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        background: #fff;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .detail-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 22px rgba(37, 99, 235, 0.08);
+    }
+
+    .detail-label {
+        margin-bottom: 8px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .detail-value {
+        color: #172554;
+        font-size: 15px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .receipt-section-title {
+        margin-bottom: 20px;
+        color: #1e293b;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .receipt-divider {
+        height: 1px;
+        margin: 28px 0;
+        border: 0;
+        background: linear-gradient(to right, #c7d2fe, #e2e8f0, transparent);
+    }
+
+    .receipt-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 46px;
+        padding: 12px 20px;
+        border-radius: 11px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .receipt-btn-primary {
+        border: 0;
+        background: linear-gradient(120deg, #4338ca, #2563eb);
+        color: #fff;
+    }
+
+    .receipt-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+        color: #fff;
+    }
+
+    .receipt-btn-light {
+        border: 1px solid #cbd5e1;
+        background: #fff;
+        color: #334155;
+    }
+
+    .receipt-btn-light:hover {
+        border-color: #93c5fd;
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .receipt-footer {
+        padding: 18px 32px;
+        border-top: 1px dashed #cbd5e1;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    @media (max-width: 576px) {
+        .receipt-page {
+            padding: 20px 8px;
+            border-radius: 12px;
+        }
+
+        .receipt-header {
+            padding: 23px 20px;
+        }
+
+        .receipt-body {
+            padding: 22px 16px;
+        }
+
+        .receipt-check {
+            width: 52px;
+            height: 52px;
+            font-size: 27px;
+        }
+
+        .amount-panel {
+            padding: 20px;
+        }
+
+        .receipt-footer {
+            padding: 16px;
+        }
+
+        .receipt-btn {
+            width: 100%;
+        }
+    }
+
+    @media print {
+        @page {
+            size: A4;
+            margin: 12mm;
+        }
+
+        body {
+            background: #fff !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .receipt-page {
+            min-height: auto;
+            padding: 0;
+            overflow: visible;
+            border-radius: 0;
+            background: #fff !important;
+        }
+
+        .receipt-page::before,
+        .receipt-page::after {
+            display: none;
+        }
+
+        .receipt-card {
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            box-shadow: none;
+        }
+
+        .receipt-header {
+            background: #2563eb !important;
+        }
+
+        .receipt-body {
+            padding: 22px;
+        }
+
+        .detail-card,
+        .amount-panel {
+            break-inside: avoid;
+        }
+
+        .d-print-none,
+        nav,
+        .navbar,
+        .sidebar,
+        footer {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="receipt-page">
+    <div class="receipt-container">
+
+        <section class="receipt-card">
+
+            <!-- Receipt Header -->
+            <div class="receipt-header">
+
+                <div class="receipt-brand">
+                    <span>✦</span>
+                    Fee Management System
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-4">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="receipt-check" aria-hidden="true">
+                            ✓
+                        </div>
+
+                        <div>
+                            <p class="mb-2 text-uppercase small fw-bold">
+                                Official Payment Receipt
+                            </p>
+
+                            <h1 class="receipt-number mb-2">
+                                {{ payment.receipt_number }}
+                            </h1>
+
+                            <p class="receipt-subtitle mb-0">
+                                Your payment has been recorded successfully.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <span class="receipt-status">
+                        ✓ {{ payment.get_status_display }}
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- Receipt Body -->
+            <div class="receipt-body">
+
+                <!-- Amount -->
+                <div class="amount-panel mb-4">
+
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+
+                        <div>
+                            <div class="amount-label">
+                                Total Amount Paid
+                            </div>
+
+                            <div class="amount-value">
+                                ₹{{ payment.amount|floatformat:2 }}
+                            </div>
+                        </div>
+
+                        <div class="text-sm-end">
+                            <div class="detail-label">
+                                Payment Date
+                            </div>
+
+                            <div class="detail-value">
+                                {{ payment.payment_date|date:'M j, Y' }}
+                            </div>
+
+                            <div class="small text-secondary mt-1">
+                                {{ payment.payment_date|date:'P' }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Student Information -->
+                <h2 class="receipt-section-title">
+                    👤 Student Information
+                </h2>
+
+                <div class="row g-3">
+
+                    <div class="col-12 col-sm-6">
+                        <div class="detail-card">
+                            <div class="detail-label">Student Name</div>
+                            <div class="detail-value">
+                                {{ payment.student_fee.student.first_name }}
+                                {{ payment.student_fee.student.last_name }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <div class="detail-card">
+                            <div class="detail-label">Student ID</div>
+                            <div class="detail-value">
+                                {{ payment.student_fee.student.student_id }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <div class="detail-card">
+                            <div class="detail-label">Course</div>
+                            <div class="detail-value">
+                                {{ payment.student_fee.fee_structure.course.name }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <div class="detail-card">
+                            <div class="detail-label">Semester</div>
+                            <div class="detail-value">
+                                {{ payment.student_fee.fee_structure.semester.display_name }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <hr class="receipt-divider">
+
+                <!-- Payment Information -->
+                <h2 class="receipt-section-title">
+                    💳 Payment Information
+                </h2>
+
+                <div class="row g-3">
+
+                    <div class="col-12 col-sm-6">
+                        <div class="detail-card">
+                            <div class="detail-label">Payment Method</div>
+                            <div class="detail-value">
+                                {{ payment.get_payment_mode_display }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <div class="detail-card">
+                            <div class="detail-label">Transaction ID</div>
+                            <div class="detail-value">
+                                {{ payment.transaction_id|default:'—' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if payment.remarks %}
+                    <div class="col-12">
+                        <div class="detail-card">
+                            <div class="detail-label">Payment Remarks</div>
+                            <div class="detail-value">
+                                {{ payment.remarks }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="col-12">
+                        <div class="detail-card">
+                            <div class="detail-label">Receipt Number</div>
+                            <div class="detail-value">
+                                {{ payment.receipt_number }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex flex-column flex-sm-row gap-3 mt-4 d-print-none">
+
+                    <a
+                        class="receipt-btn receipt-btn-primary"
+                        href="{% url 'fees:student_fee_detail' payment.student_fee.id %}">
+
+                        <span>←</span>
+                        Back to Fee Account
+
+                    </a>
+
+                    <button
+                        class="receipt-btn receipt-btn-light"
+                        type="button"
+                        onclick="window.print()">
+
+                        <span>🖨</span>
+                        Print Receipt
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="receipt-footer">
+                <div class="fw-bold text-dark mb-1">
+                    Payment Acknowledgement
+                </div>
+
+                This receipt confirms that the payment details above have been recorded in the system.
+
+                <div class="mt-2">
+                    Please keep this receipt for your records.
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+</div>
+
+{% endblock %}

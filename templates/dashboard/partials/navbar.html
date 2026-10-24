@@ -1,0 +1,32 @@
+<div class="navbar">
+
+    <div class="navbar-title">
+
+        Dashboard
+
+    </div>
+
+
+    <div class="admin-user">
+
+        👤
+        {% if request.user.is_authenticated %}
+
+            {{ request.user.username }}
+
+        {% else %}
+
+            Admin
+
+        {% endif %}
+
+        {% if request.user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}" style="display: inline; margin-left: 16px;">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        {% endif %}
+
+    </div>
+
+</div>

@@ -1,0 +1,15 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Academics | College ERP{% endblock %}
+{% block content %}
+<h1>Academics</h1>
+<table>
+    <thead><tr><th>Course code</th><th>Course</th><th>Department</th><th>Duration</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for course in courses %}
+        <tr><td>{{ course.code }}</td><td>{{ course.name }}</td><td>{{ course.department.name }}</td><td>{{ course.duration_years }} years</td><td>{% if course.is_active %}Active{% else %}Inactive{% endif %}</td></tr>
+    {% empty %}
+        <tr><td colspan="5">No courses found.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

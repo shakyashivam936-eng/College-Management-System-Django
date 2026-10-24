@@ -1,0 +1,1160 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | College Portal{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================
+       DASHBOARD GLOBAL STYLES
+    ========================= */
+
+    .dashboard-container {
+        padding-top: 15px;
+        padding-bottom: 40px;
+    }
+
+    .dashboard-container * {
+        box-sizing: border-box;
+    }
+
+    .dashboard-container .dashboard-heading {
+        color: #172554;
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -0.7px;
+    }
+
+    .dashboard-container .muted-text {
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    /* =========================
+       WELCOME BANNER
+    ========================= */
+
+    .welcome-banner {
+        position: relative;
+        overflow: hidden;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+
+        padding: 32px;
+
+        color: #ffffff;
+
+        background:
+            linear-gradient(
+                120deg,
+                #1d4ed8,
+                #4f46e5,
+                #7c3aed
+            );
+
+        border-radius: 22px;
+
+        box-shadow:
+            0 15px 35px rgba(79, 70, 229, 0.18);
+    }
+
+    .welcome-banner::before {
+        content: "";
+
+        position: absolute;
+        top: -100px;
+        right: 100px;
+
+        width: 240px;
+        height: 240px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .welcome-banner::after {
+        content: "";
+
+        position: absolute;
+        right: -60px;
+        bottom: -150px;
+
+        width: 300px;
+        height: 300px;
+
+        border: 45px solid rgba(255, 255, 255, 0.09);
+        border-radius: 50%;
+    }
+
+    .welcome-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .welcome-label {
+        display: inline-block;
+
+        margin-bottom: 13px;
+        padding: 7px 13px;
+
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 30px;
+
+        background: rgba(255, 255, 255, 0.13);
+
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    .welcome-title {
+        margin: 0 0 10px;
+
+        color: #ffffff;
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .welcome-description {
+        max-width: 520px;
+
+        margin: 0;
+
+        color: #e0e7ff;
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .welcome-profile {
+        position: relative;
+        z-index: 1;
+
+        display: flex;
+        align-items: center;
+        gap: 13px;
+
+        padding: 15px 18px;
+
+        border: 1px solid rgba(255, 255, 255, 0.23);
+        border-radius: 16px;
+
+        background: rgba(255, 255, 255, 0.13);
+
+        backdrop-filter: blur(10px);
+    }
+
+    .profile-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+
+        border-radius: 14px;
+
+        color: #4338ca;
+        background: #ffffff;
+
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+    .profile-name {
+        margin-bottom: 5px;
+
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .profile-role {
+        color: #e0e7ff;
+        font-size: 12px;
+    }
+
+    /* =========================
+       STAT CARDS
+    ========================= */
+
+    .dashboard-stat {
+        position: relative;
+        overflow: hidden;
+
+        height: 100%;
+        min-height: 150px;
+
+        padding: 23px;
+
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+
+        background: #ffffff;
+
+        box-shadow:
+            0 5px 18px rgba(15, 23, 42, 0.035);
+
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+    }
+
+    .dashboard-stat:hover {
+        transform: translateY(-5px);
+
+        box-shadow:
+            0 14px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        margin-bottom: 20px;
+    }
+
+    .stat-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 48px;
+        height: 48px;
+
+        border-radius: 14px;
+
+        font-size: 23px;
+    }
+
+    .stat-label {
+        margin-bottom: 7px;
+
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .stat-value {
+        margin: 0;
+
+        color: #172554;
+        font-size: 19px;
+        font-weight: 800;
+
+        overflow-wrap: anywhere;
+    }
+
+    .stat-blue .stat-icon {
+        color: #2563eb;
+        background: #dbeafe;
+    }
+
+    .stat-purple .stat-icon {
+        color: #7c3aed;
+        background: #ede9fe;
+    }
+
+    .stat-green .stat-icon {
+        color: #059669;
+        background: #d1fae5;
+    }
+
+    .stat-orange .stat-icon {
+        color: #ea580c;
+        background: #ffedd5;
+    }
+
+    .stat-indicator {
+        width: 8px;
+        height: 8px;
+
+        border-radius: 50%;
+        background: #10b981;
+    }
+
+    /* =========================
+       SECTION CARDS
+    ========================= */
+
+    .dashboard-panel {
+        height: 100%;
+
+        padding: 26px;
+
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+
+        background: #ffffff;
+
+        box-shadow:
+            0 5px 18px rgba(15, 23, 42, 0.035);
+    }
+
+    .panel-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        margin-bottom: 10px;
+    }
+
+    .panel-heading-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 43px;
+        height: 43px;
+        flex-shrink: 0;
+
+        border-radius: 13px;
+
+        color: #4f46e5;
+        background: #eef2ff;
+
+        font-size: 21px;
+    }
+
+    .panel-title {
+        margin: 0;
+
+        color: #172554;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .panel-description {
+        margin-bottom: 23px;
+
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    /* =========================
+       ROLE BADGES
+    ========================= */
+
+    .role-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        padding: 9px 14px;
+
+        border-radius: 30px;
+
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .role-admin {
+        color: #6d28d9;
+        background: #ede9fe;
+    }
+
+    .role-teacher {
+        color: #0369a1;
+        background: #e0f2fe;
+    }
+
+    .role-student {
+        color: #047857;
+        background: #d1fae5;
+    }
+
+    .role-default {
+        color: #475569;
+        background: #f1f5f9;
+    }
+
+    /* =========================
+       ACTION BUTTONS
+    ========================= */
+
+    .dashboard-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+
+        min-height: 45px;
+        padding: 12px 18px;
+
+        border: none;
+        border-radius: 11px;
+
+        color: #ffffff;
+
+        background:
+            linear-gradient(
+                100deg,
+                #2563eb,
+                #4f46e5
+            );
+
+        font-size: 13px;
+        font-weight: 700;
+
+        text-decoration: none;
+
+        transition: 0.2s;
+    }
+
+    .dashboard-action:hover {
+        color: #ffffff;
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 8px 20px rgba(79, 70, 229, 0.2);
+    }
+
+    .dashboard-action-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        min-height: 43px;
+        padding: 11px 16px;
+
+        border: 1px solid #c7d2fe;
+        border-radius: 11px;
+
+        color: #4338ca;
+        background: #eef2ff;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .dashboard-action-secondary:hover {
+        color: #3730a3;
+        background: #e0e7ff;
+    }
+
+    /* =========================
+       ACCOUNT DETAILS
+    ========================= */
+
+    .account-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        margin-bottom: 25px;
+    }
+
+    .account-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 44px;
+        height: 44px;
+
+        border-radius: 13px;
+
+        color: #0d9488;
+        background: #ccfbf1;
+
+        font-size: 21px;
+    }
+
+    .account-detail {
+        padding: 15px 0;
+
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .account-detail:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        margin-bottom: 6px;
+
+        color: #94a3b8;
+        font-size: 11px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+    }
+
+    .detail-value {
+        color: #334155;
+        font-size: 13px;
+        font-weight: 650;
+
+        overflow-wrap: anywhere;
+    }
+
+    /* =========================
+       QUICK LINKS
+    ========================= */
+
+    .quick-link {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+
+        padding: 14px;
+
+        border: 1px solid #e5e7eb;
+        border-radius: 13px;
+
+        color: #334155;
+        background: #ffffff;
+
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .quick-link:hover {
+        border-color: #c7d2fe;
+        background: #f8faff;
+        color: #4338ca;
+        transform: translateX(3px);
+    }
+
+    .quick-link-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+
+        border-radius: 12px;
+
+        background: #eef2ff;
+        color: #4f46e5;
+
+        font-size: 20px;
+    }
+
+    .quick-link-title {
+        margin-bottom: 4px;
+
+        font-size: 13px;
+        font-weight: 750;
+    }
+
+    .quick-link-description {
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .quick-link-arrow {
+        margin-left: auto;
+        color: #94a3b8;
+        font-size: 18px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 767px) {
+
+        .welcome-banner {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 25px;
+        }
+
+        .welcome-title {
+            font-size: 24px;
+        }
+
+        .welcome-profile {
+            width: 100%;
+        }
+
+        .dashboard-container .dashboard-heading {
+            font-size: 24px;
+        }
+
+        .dashboard-panel {
+            padding: 21px;
+        }
+    }
+</style>
+
+
+<div class="dashboard-container">
+
+    <!-- =========================
+         WELCOME BANNER
+    ========================= -->
+
+    <section class="welcome-banner mb-4">
+
+        <div class="welcome-content">
+
+            <span class="welcome-label">
+                COLLEGE MANAGEMENT SYSTEM
+            </span>
+
+            <h1 class="welcome-title">
+                Welcome back,
+                {{ user.first_name|default:user.username }}! 👋
+            </h1>
+
+            <p class="welcome-description">
+                Welcome to your college portal.
+                Access your workspace, manage your information
+                and stay connected with your academic journey.
+            </p>
+
+        </div>
+
+        <div class="welcome-profile">
+
+            <div class="profile-avatar">
+                {{ user.first_name|default:user.username|slice:":1"|upper }}
+            </div>
+
+            <div>
+                <div class="profile-name">
+                    {{ user.get_full_name|default:user.username }}
+                </div>
+
+                <div class="profile-role">
+                    {{ user.get_role_display|default:user.role }}
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         DASHBOARD OVERVIEW
+    ========================= -->
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+
+        <div>
+            <h2 class="dashboard-heading mb-1">
+                Dashboard Overview
+            </h2>
+
+            <p class="muted-text mb-0">
+                Here's your college portal at a glance.
+            </p>
+        </div>
+
+        {% if user.role == 'ADMIN' %}
+
+            <span class="role-badge role-admin">
+                🛡️ Administrator
+            </span>
+
+        {% elif user.role == 'TEACHER' or user.role == 'FACULTY' %}
+
+            <span class="role-badge role-teacher">
+                👨‍🏫 Teacher
+            </span>
+
+        {% elif user.role == 'STUDENT' %}
+
+            <span class="role-badge role-student">
+                🎓 Student
+            </span>
+
+        {% else %}
+
+            <span class="role-badge role-default">
+                👤 {{ user.get_role_display|default:user.role }}
+            </span>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================
+         STATISTIC CARDS
+         Real values are not configured yet.
+    ========================= -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="dashboard-stat stat-blue">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon">
+                        👤
+                    </div>
+
+                    <span class="stat-indicator"></span>
+
+                </div>
+
+                <div class="stat-label">
+                    Account Username
+                </div>
+
+                <h3 class="stat-value">
+                    {{ user.username }}
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="dashboard-stat stat-purple">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon">
+                        🛡️
+                    </div>
+
+                </div>
+
+                <div class="stat-label">
+                    Account Role
+                </div>
+
+                <h3 class="stat-value">
+                    {{ user.get_role_display|default:user.role }}
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="dashboard-stat stat-green">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon">
+                        ✉️
+                    </div>
+
+                </div>
+
+                <div class="stat-label">
+                    Email Address
+                </div>
+
+                <h3 class="stat-value">
+                    {% if user.email %}
+                        Provided
+                    {% else %}
+                        Not Provided
+                    {% endif %}
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="dashboard-stat stat-orange">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon">
+                        📱
+                    </div>
+
+                </div>
+
+                <div class="stat-label">
+                    Phone Number
+                </div>
+
+                <h3 class="stat-value">
+                    {% if user.phone %}
+                        Provided
+                    {% else %}
+                        Not Provided
+                    {% endif %}
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         MAIN DASHBOARD CONTENT
+    ========================= -->
+
+    <div class="row g-4">
+
+        <!-- LEFT COLUMN -->
+
+        <div class="col-12 col-lg-7">
+
+            <section class="dashboard-panel">
+
+                <div class="panel-heading">
+
+                    <div class="panel-heading-icon">
+                        🏫
+                    </div>
+
+                    <h2 class="panel-title">
+                        Your Workspace
+                    </h2>
+
+                </div>
+
+                <p class="panel-description">
+                    Access the tools and information available
+                    for your account role.
+                </p>
+
+
+                {% if user.role == 'ADMIN' %}
+
+                    <div class="role-badge role-admin mb-3">
+                        🛡️ Administration
+                    </div>
+
+                    <h3 class="h5 fw-bold mb-2">
+                        Manage your college
+                    </h3>
+
+                    <p class="muted-text mb-4">
+                        Manage student records and keep college
+                        information up to date.
+                    </p>
+
+                    <a class="dashboard-action"
+                       href="{% url 'student_list' %}">
+
+                        👥 Manage Students
+
+                        <span>→</span>
+
+                    </a>
+
+
+                {% elif user.role == 'TEACHER' or user.role == 'FACULTY' %}
+
+                    <div class="role-badge role-teacher mb-3">
+                        👨‍🏫 Teaching Workspace
+                    </div>
+
+                    <h3 class="h5 fw-bold mb-2">
+                        Your teaching workspace
+                    </h3>
+
+                    <p class="muted-text mb-4">
+                        Open the student directory to view student
+                        records available in your portal.
+                    </p>
+
+                    <a class="dashboard-action"
+                       href="{% url 'student_list' %}">
+
+                        👥 View Students
+
+                        <span>→</span>
+
+                    </a>
+
+
+                {% elif user.role == 'STUDENT' %}
+
+                    <div class="role-badge role-student mb-3">
+                        🎓 Student Portal
+                    </div>
+
+                    <h3 class="h5 fw-bold mb-2">
+                        Your academic workspace
+                    </h3>
+
+                    <p class="muted-text mb-4">
+                        You are successfully signed in.
+                        Your student features can be accessed
+                        from the available navigation links.
+                    </p>
+
+
+                {% else %}
+
+                    <div class="role-badge role-default mb-3">
+                        👤 Personal Workspace
+                    </div>
+
+                    <h3 class="h5 fw-bold mb-2">
+                        Welcome to your workspace
+                    </h3>
+
+                    <p class="muted-text mb-0">
+                        Choose an available section from the
+                        navigation menu.
+                    </p>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- QUICK LINKS -->
+
+            <section class="dashboard-panel mt-4">
+
+                <div class="panel-heading">
+
+                    <div class="panel-heading-icon">
+                        ⚡
+                    </div>
+
+                    <h2 class="panel-title">
+                        Quick Access
+                    </h2>
+
+                </div>
+
+                <p class="panel-description">
+                    Quickly navigate to your available sections.
+                </p>
+
+                <div class="d-grid gap-3">
+
+                    {% if user.role == 'ADMIN' or user.role == 'TEACHER' or user.role == 'FACULTY' %}
+
+                        <a href="{% url 'student_list' %}"
+                           class="quick-link">
+
+                            <div class="quick-link-icon">
+                                👥
+                            </div>
+
+                            <div>
+                                <div class="quick-link-title">
+                                    Student Directory
+                                </div>
+
+                                <div class="quick-link-description">
+                                    View student records
+                                </div>
+                            </div>
+
+                            <span class="quick-link-arrow">→</span>
+
+                        </a>
+
+                    {% endif %}
+
+                    <a href="{% url 'logout' %}"
+                       class="quick-link">
+
+                        <div class="quick-link-icon"
+                             style="background:#fee2e2;color:#dc2626;">
+
+                            🚪
+
+                        </div>
+
+                        <div>
+                            <div class="quick-link-title">
+                                Sign Out
+                            </div>
+
+                            <div class="quick-link-description">
+                                Securely end your session
+                            </div>
+                        </div>
+
+                        <span class="quick-link-arrow">→</span>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- RIGHT COLUMN -->
+
+        <div class="col-12 col-lg-5">
+
+            <section class="dashboard-panel">
+
+                <div class="account-header">
+
+                    <div class="account-icon">
+                        👤
+                    </div>
+
+                    <div>
+
+                        <h2 class="panel-title">
+                            Account Details
+                        </h2>
+
+                        <p class="muted-text mb-0 mt-1">
+                            Your profile information
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="account-detail">
+
+                    <div class="detail-label">
+                        Full Name
+                    </div>
+
+                    <div class="detail-value">
+                        {{ user.get_full_name|default:user.username }}
+                    </div>
+
+                </div>
+
+
+                <div class="account-detail">
+
+                    <div class="detail-label">
+                        Username
+                    </div>
+
+                    <div class="detail-value">
+                        {{ user.username }}
+                    </div>
+
+                </div>
+
+
+                <div class="account-detail">
+
+                    <div class="detail-label">
+                        Email Address
+                    </div>
+
+                    <div class="detail-value">
+                        {{ user.email|default:'Not provided' }}
+                    </div>
+
+                </div>
+
+
+                <div class="account-detail">
+
+                    <div class="detail-label">
+                        Phone Number
+                    </div>
+
+                    <div class="detail-value">
+                        {{ user.phone|default:'Not provided' }}
+                    </div>
+
+                </div>
+
+
+                <div class="account-detail">
+
+                    <div class="detail-label">
+                        Account Role
+                    </div>
+
+                    <div class="detail-value">
+                        {{ user.get_role_display|default:user.role }}
+                    </div>
+
+                </div>
+
+
+                <div class="mt-4 p-3 rounded-3"
+                     style="background:#f0fdf4;border:1px solid #bbf7d0;">
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <span style="font-size:20px;">
+                            ✅
+                        </span>
+
+                        <div>
+
+                            <div class="fw-bold"
+                                 style="font-size:13px;color:#166534;">
+
+                                Account Session Active
+
+                            </div>
+
+                            <div style="font-size:11px;color:#15803d;">
+
+                                You are signed in to the portal.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- PORTAL INFORMATION -->
+
+            <section class="dashboard-panel mt-4">
+
+                <div class="panel-heading">
+
+                    <div class="panel-heading-icon"
+                         style="background:#fef3c7;color:#b45309;">
+
+                        💡
+
+                    </div>
+
+                    <h2 class="panel-title">
+                        Portal Information
+                    </h2>
+
+                </div>
+
+                <p class="panel-description mb-0">
+                    Your College Management System brings account
+                    information and available academic tools
+                    together in one place.
+                </p>
+
+            </section>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

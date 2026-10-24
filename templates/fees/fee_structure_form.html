@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Create fee structure{% endblock %}
+
+{% block content %}
+<div class="fees-page">
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-9 col-xl-8">
+        <div class="mb-4">
+            <a class="link-secondary text-decoration-none small" href="{% url 'fees:fee_structure_list' %}">← Back to fee management</a>
+            <h1 class="page-heading h2 mt-3 mb-1">Create fee structure</h1>
+            <p class="text-secondary mb-0">Set the fee amounts for a course, semester, and academic year.</p>
+        </div>
+        <section class="card fee-form-section p-4 p-md-5">
+            <form method="post">
+                {% csrf_token %}
+                {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+                {{ form.as_p }}
+                <div class="d-flex flex-column flex-sm-row gap-2 pt-4 border-top mt-4">
+                    <button class="btn btn-primary px-4" type="submit">Save fee structure</button>
+                    <a class="btn btn-light px-4" href="{% url 'fees:fee_structure_list' %}">Cancel</a>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+</div>
+{% endblock %}

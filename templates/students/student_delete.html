@@ -1,0 +1,515 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Student | College Portal{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================================
+       PROFESSIONAL DELETE STUDENT PAGE
+    ========================================= */
+
+    .delete-page {
+        position: relative;
+        isolation: isolate;
+        min-height: 85vh;
+        padding: 35px 15px 45px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 20px;
+        background: #eef3ff;
+    }
+
+    .delete-page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        background:
+            linear-gradient(
+                120deg,
+                rgba(19, 49, 120, .83),
+                rgba(52, 87, 210, .68),
+                rgba(124, 58, 237, .48)
+            ),
+            url("{% static 'images/college-campus.jpg' %}");
+        background-position: center;
+        background-size: cover;
+        transform: scale(1.02);
+    }
+
+    .delete-page::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: radial-gradient(
+            circle at 15% 15%,
+            rgba(255,255,255,.15),
+            transparent 30%
+        );
+        pointer-events: none;
+    }
+
+    .delete-page-heading {
+        margin-bottom: 30px;
+        color: #fff;
+        text-align: center;
+    }
+
+    .delete-page-heading .eyebrow {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 8px 16px;
+        border: 1px solid rgba(255,255,255,.35);
+        border-radius: 30px;
+        background: rgba(255,255,255,.15);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        backdrop-filter: blur(8px);
+    }
+
+    .delete-page-heading h1 {
+        margin: 0 0 10px;
+        color: #fff;
+        font-size: clamp(25px, 4vw, 36px);
+        font-weight: 850;
+        letter-spacing: -.6px;
+    }
+
+    .delete-page-heading p {
+        margin: 0;
+        color: #e0e7ff;
+        font-size: 14px;
+    }
+
+    /* Main Card */
+
+    .delete-card {
+        position: relative;
+        width: 100%;
+        max-width: 640px;
+        padding: 42px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,.8);
+        border-radius: 25px;
+        background: rgba(255,255,255,.97);
+        box-shadow: 0 25px 80px rgba(15,23,42,.25);
+        text-align: center;
+        animation: deleteCardEnter .5s ease;
+    }
+
+    .delete-card::before {
+        content: "";
+        position: absolute;
+        top: -75px;
+        right: -75px;
+        width: 170px;
+        height: 170px;
+        border-radius: 50%;
+        background: linear-gradient(
+            135deg,
+            rgba(99,102,241,.16),
+            rgba(168,85,247,.13)
+        );
+        pointer-events: none;
+    }
+
+    .delete-card::after {
+        content: "";
+        position: absolute;
+        bottom: -65px;
+        left: -65px;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: linear-gradient(
+            135deg,
+            rgba(59,130,246,.13),
+            rgba(6,182,212,.12)
+        );
+        pointer-events: none;
+    }
+
+    @keyframes deleteCardEnter {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Warning Icon */
+
+    .delete-warning-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 25px;
+        border: 10px solid #ffe4e9;
+        border-radius: 50%;
+        color: white;
+        background: linear-gradient(135deg, #fb2854, #e11d48);
+        box-shadow: 0 8px 25px rgba(225,29,72,.2);
+        font-size: 46px;
+        font-weight: 800;
+    }
+
+    .delete-warning-icon::before,
+    .delete-warning-icon::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: #dbeafe;
+        z-index: -1;
+    }
+
+    .delete-warning-icon::before {
+        width: 13px;
+        height: 13px;
+        top: 12px;
+        left: -35px;
+    }
+
+    .delete-warning-icon::after {
+        width: 9px;
+        height: 9px;
+        top: -5px;
+        right: -30px;
+    }
+
+    /* Content */
+
+    .delete-title {
+        margin-bottom: 13px;
+        color: #172554;
+        font-size: clamp(25px, 4vw, 33px);
+        font-weight: 850;
+        letter-spacing: -.7px;
+    }
+
+    .delete-title span {
+        color: #e11d48;
+    }
+
+    .delete-description {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.9;
+    }
+
+    .delete-student-name {
+        display: block;
+        margin: 14px 0 7px;
+        color: #172554;
+        font-size: 19px;
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    .delete-student-id {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 4px;
+        padding: 8px 13px;
+        border: 1px solid #c7d2fe;
+        border-radius: 9px;
+        color: #4338ca;
+        background: #eef2ff;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    /* Irreversible Warning */
+
+    .delete-alert {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin: 24px 0;
+        padding: 14px 16px;
+        border: 1px solid #fecdd3;
+        border-radius: 12px;
+        color: #be123c;
+        background: linear-gradient(135deg, #fff1f2, #fff7f8);
+        font-size: 12px;
+        font-weight: 750;
+        line-height: 1.6;
+    }
+
+    .delete-alert-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 23px;
+        height: 23px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        color: #fff;
+        background: #e11d48;
+        font-size: 14px;
+        font-weight: 900;
+    }
+
+    /* Divider */
+
+    .delete-divider {
+        height: 1px;
+        margin: 27px 0;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            #dbe3f1,
+            transparent
+        );
+    }
+
+    /* Buttons */
+
+    .delete-actions {
+        display: flex;
+        gap: 13px;
+    }
+
+    .delete-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        flex: 1;
+        min-height: 54px;
+        padding: 13px 18px;
+        border: 1px solid transparent;
+        border-radius: 13px;
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all .22s ease;
+    }
+
+    .delete-btn-cancel {
+        border-color: #cbd5e1;
+        color: #334155;
+        background: linear-gradient(135deg, #fff, #f1f5f9);
+    }
+
+    .delete-btn-cancel:hover {
+        border-color: #93c5fd;
+        color: #1d4ed8;
+        background: #eff6ff;
+        transform: translateY(-2px);
+    }
+
+    .delete-btn-confirm {
+        color: #fff;
+        background: linear-gradient(135deg, #f43f5e, #dc2626);
+        box-shadow: 0 8px 18px rgba(220,38,38,.18);
+    }
+
+    .delete-btn-confirm:hover {
+        color: #fff;
+        background: linear-gradient(135deg, #e11d48, #b91c1c);
+        box-shadow: 0 12px 23px rgba(220,38,38,.25);
+        transform: translateY(-2px);
+    }
+
+    .delete-btn:focus-visible {
+        outline: 3px solid #93c5fd;
+        outline-offset: 3px;
+    }
+
+    /* Footer */
+
+    .delete-footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 28px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        text-shadow: 0 1px 5px rgba(15,23,42,.2);
+    }
+
+    .delete-footer-line {
+        width: 45px;
+        height: 1px;
+        background: rgba(255,255,255,.65);
+    }
+
+    /* Responsive */
+
+    @media (max-width: 576px) {
+        .delete-page {
+            min-height: 75vh;
+            padding: 25px 10px;
+            border-radius: 14px;
+        }
+
+        .delete-card {
+            padding: 30px 20px;
+            border-radius: 20px;
+        }
+
+        .delete-warning-icon {
+            width: 85px;
+            height: 85px;
+            font-size: 38px;
+        }
+
+        .delete-student-name {
+            font-size: 17px;
+        }
+
+        .delete-actions {
+            flex-direction: column-reverse;
+        }
+
+        .delete-btn {
+            width: 100%;
+            min-height: 49px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .delete-card {
+            animation: none;
+        }
+
+        .delete-btn {
+            transition: none;
+        }
+    }
+</style>
+
+
+<div class="delete-page">
+
+    <!-- PAGE HEADING -->
+
+    <div class="delete-page-heading">
+
+        <span class="eyebrow">
+            🎓 COLLEGE PORTAL
+        </span>
+
+        <h1>Student Management</h1>
+
+        <p>Manage your student records securely.</p>
+
+    </div>
+
+
+    <!-- DELETE CONFIRMATION CARD -->
+
+    <section class="delete-card">
+
+        <!-- Warning Icon -->
+
+        <div class="delete-warning-icon" aria-hidden="true">
+            !
+        </div>
+
+
+        <!-- Heading -->
+
+        <h2 class="delete-title">
+            Delete <span>student?</span>
+        </h2>
+
+        <p class="delete-description">
+            You are about to permanently remove the following student
+            from your college records.
+        </p>
+
+
+        <!-- Student Details -->
+
+        <div class="delete-student-name">
+            {{ student.first_name }} {{ student.last_name }}
+        </div>
+
+        <div class="delete-student-id">
+            🪪 Student ID: {{ student.student_id }}
+        </div>
+
+
+        <!-- Warning Message -->
+
+        <div class="delete-alert" role="alert">
+
+            <span class="delete-alert-icon" aria-hidden="true">!</span>
+
+            <span>
+                Warning: This action cannot be undone.
+                The student record will be permanently deleted.
+            </span>
+
+        </div>
+
+
+        <div class="delete-divider"></div>
+
+
+        <!-- Confirmation Form -->
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="delete-actions">
+
+                <a
+                    class="delete-btn delete-btn-cancel"
+                    href="{% url 'student_list' %}"
+                >
+                    <span aria-hidden="true">✕</span>
+                    Cancel
+                </a>
+
+                <button
+                    class="delete-btn delete-btn-confirm"
+                    type="submit"
+                >
+                    <span aria-hidden="true">🗑</span>
+                    Yes, delete student
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer class="delete-footer">
+
+        <span class="delete-footer-line"></span>
+
+        <span>🔒 Authorized users only</span>
+
+        <span class="delete-footer-line"></span>
+
+    </footer>
+
+</div>
+
+{% endblock %}

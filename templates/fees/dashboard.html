@@ -1,0 +1,870 @@
+{% extends 'base.html' %}
+
+{% block title %}Fees Dashboard{% endblock %}
+
+{% block content %}
+
+<style>
+    .fees-dashboard {
+        min-height: 100vh;
+        padding: 30px 15px;
+        border-radius: 18px;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(15, 23, 42, .94),
+                rgba(49, 46, 129, .88)
+            ),
+            url('/static/images/fees-dashboard-bg.jpg') center/cover no-repeat;
+    }
+
+    .fd-container {
+        max-width: 1450px;
+        margin: auto;
+    }
+
+    .fd-heading {
+        color: #fff;
+        font-size: clamp(27px, 4vw, 38px);
+        font-weight: 800;
+    }
+
+    .fd-subtitle {
+        color: #cbd5e1;
+        font-size: 14px;
+    }
+
+    .fd-card {
+        height: 100%;
+        padding: 23px;
+        border: 1px solid rgba(255,255,255,.65);
+        border-radius: 18px;
+        background: rgba(255,255,255,.97);
+        box-shadow: 0 12px 35px rgba(0,0,0,.12);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .fd-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 18px 40px rgba(0,0,0,.18);
+    }
+
+    .fd-stat {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .fd-stat-label {
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .fd-stat-value {
+        margin-top: 12px;
+        color: #172554;
+        font-size: clamp(22px, 3vw, 31px);
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    .fd-stat-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        flex-shrink: 0;
+        border-radius: 15px;
+        font-size: 24px;
+    }
+
+    .fd-blue .fd-stat-icon {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .fd-green .fd-stat-icon {
+        background: #d1fae5;
+        color: #047857;
+    }
+
+    .fd-orange .fd-stat-icon {
+        background: #ffedd5;
+        color: #c2410c;
+    }
+
+    .fd-purple .fd-stat-icon {
+        background: #ede9fe;
+        color: #6d28d9;
+    }
+
+    .fd-section {
+        margin-top: 25px;
+        padding: 25px;
+        border: 1px solid rgba(255,255,255,.65);
+        border-radius: 20px;
+        background: rgba(255,255,255,.98);
+        box-shadow: 0 12px 35px rgba(0,0,0,.12);
+    }
+
+    .fd-section-title {
+        margin-bottom: 5px;
+        color: #172554;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .fd-section-description {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .fd-action {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        height: 100%;
+        padding: 18px;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        background: #fff;
+        color: #172554;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+    .fd-action:hover {
+        transform: translateY(-3px);
+        border-color: #a5b4fc;
+        background: #f5f3ff;
+        color: #4338ca;
+    }
+
+    .fd-action-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        background: #eef2ff;
+        font-size: 21px;
+    }
+
+    .fd-action-title {
+        margin-bottom: 4px;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .fd-action-text {
+        margin-bottom: 0;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .fd-progress {
+        display: block;
+        width: 100%;
+        height: 11px;
+        border: 0;
+        border-radius: 20px;
+        background: #e2e8f0;
+    }
+
+    .fd-progress-bar {
+        color: #4338ca;
+        accent-color: #4338ca;
+    }
+
+    .fd-progress-bar::-webkit-progress-bar {
+        border-radius: 20px;
+        background: #e2e8f0;
+    }
+
+    .fd-progress-bar::-webkit-progress-value {
+        border-radius: 20px;
+        background: linear-gradient(90deg, #4338ca, #06b6d4);
+    }
+
+    .fd-progress-bar::-moz-progress-bar {
+        border-radius: 20px;
+        background: linear-gradient(90deg, #4338ca, #06b6d4);
+    }
+
+    .fd-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .fd-table {
+        width: 100%;
+        margin-top: 15px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .fd-table th {
+        padding: 14px 12px;
+        border-bottom: 1px solid #e2e8f0;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .5px;
+        text-align: left;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .fd-table td {
+        padding: 15px 12px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .fd-table tbody tr:hover {
+        background: #f8faff;
+    }
+
+    .fd-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .fd-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 30px;
+        background: #fef3c7;
+        color: #92400e;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .fd-badge-paid {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .fd-badge-partial {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .fd-badge-due {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .fd-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border: 1px solid #c7d2fe;
+        border-radius: 9px;
+        background: #eef2ff;
+        color: #4338ca;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .fd-btn:hover {
+        background: #4338ca;
+        color: #fff;
+    }
+
+    .fd-btn-green {
+        border-color: #a7f3d0;
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .fd-btn-green:hover {
+        background: #047857;
+        color: #fff;
+    }
+
+    .fd-empty {
+        padding: 30px 10px;
+        color: #64748b;
+        text-align: center;
+    }
+
+    .fd-quick-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    @media(max-width: 576px) {
+        .fees-dashboard {
+            padding: 20px 9px;
+        }
+
+        .fd-card,
+        .fd-section {
+            padding: 18px;
+        }
+
+        .fd-stat-icon {
+            width: 42px;
+            height: 42px;
+            font-size: 20px;
+        }
+
+        .fd-quick-links > a {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="fees-dashboard">
+<div class="fd-container">
+
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+
+        <div>
+            <h1 class="fd-heading mb-2">
+                Fees Management Dashboard
+            </h1>
+
+            <p class="fd-subtitle mb-0">
+                Monitor fee collection, outstanding balances and student payments.
+            </p>
+        </div>
+
+        <div class="fd-quick-links">
+
+            <a href="{% url 'fees:student_fee_create' %}"
+               class="btn btn-primary px-4 py-2">
+                + Student Fee
+            </a>
+
+            <a href="{% url 'fees:fee_structure_list' %}"
+               class="btn btn-light px-4 py-2">
+                Fee Structures
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Financial Summary -->
+    <div class="row g-3">
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="fd-card fd-blue">
+                <div class="fd-stat">
+                    <div>
+                        <div class="fd-stat-label">Total Fee Amount</div>
+                        <div class="fd-stat-value">
+                            ₹{{ total_fees|floatformat:2 }}
+                        </div>
+                    </div>
+                    <div class="fd-stat-icon">₹</div>
+                </div>
+                <p class="text-secondary small mt-3 mb-0">
+                    Total fees assigned to student accounts
+                </p>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="fd-card fd-green">
+                <div class="fd-stat">
+                    <div>
+                        <div class="fd-stat-label">Fees Collected</div>
+                        <div class="fd-stat-value">
+                            ₹{{ total_paid|floatformat:2 }}
+                        </div>
+                    </div>
+                    <div class="fd-stat-icon">✓</div>
+                </div>
+                <p class="text-secondary small mt-3 mb-0">
+                    Amount recorded against student fee accounts
+                </p>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="fd-card fd-orange">
+                <div class="fd-stat">
+                    <div>
+                        <div class="fd-stat-label">Fees Due</div>
+                        <div class="fd-stat-value">
+                            ₹{{ total_due|floatformat:2 }}
+                        </div>
+                    </div>
+                    <div class="fd-stat-icon">⌛</div>
+                </div>
+                <p class="text-secondary small mt-3 mb-0">
+                    Outstanding balance across student accounts
+                </p>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="fd-card fd-purple">
+                <div class="fd-stat">
+                    <div>
+                        <div class="fd-stat-label">Students with Fees</div>
+                        <div class="fd-stat-value">
+                            {{ total_students }}
+                        </div>
+                    </div>
+                    <div class="fd-stat-icon">👨‍🎓</div>
+                </div>
+                <p class="text-secondary small mt-3 mb-0">
+                    Unique students with fee accounts
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Collection Progress -->
+    <section class="fd-section">
+
+        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+            <div>
+                <h2 class="fd-section-title">Fee Collection Progress</h2>
+                <p class="fd-section-description mb-0">
+                    Percentage of assigned fees collected
+                </p>
+            </div>
+
+            <span class="fw-bold text-primary">
+                {{ collection_percentage }}%
+            </span>
+        </div>
+
+        <progress class="fd-progress fd-progress-bar"
+                  value="{{ collection_percentage }}"
+                  max="100"
+                  aria-label="Fee collection progress">
+        </progress>
+
+        <div class="d-flex justify-content-between gap-3 mt-3 small">
+            <span class="text-success fw-semibold">
+                Collected: ₹{{ total_paid|floatformat:2 }}
+            </span>
+
+            <span class="text-danger fw-semibold">
+                Due: ₹{{ total_due|floatformat:2 }}
+            </span>
+        </div>
+
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="fd-section">
+
+        <h2 class="fd-section-title">Quick Actions</h2>
+        <p class="fd-section-description">
+            Open the relevant fee management page.
+        </p>
+
+        <div class="row g-3 mt-1">
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <a class="fd-action"
+                   href="{% url 'fees:student_fee_create' %}">
+                    <div class="fd-action-icon">👨‍🎓</div>
+                    <div>
+                        <h3 class="fd-action-title">Student Fee Form</h3>
+                        <p class="fd-action-text">Create a fee account</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <a class="fd-action"
+                   href="{% url 'fees:fee_structure_list' %}">
+                    <div class="fd-action-icon">📚</div>
+                    <div>
+                        <h3 class="fd-action-title">Fee Structures</h3>
+                        <p class="fd-action-text">Manage course fees</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <a class="fd-action"
+                   href="#student-fees">
+                    <div class="fd-action-icon">📋</div>
+                    <div>
+                        <h3 class="fd-action-title">Student Fee Details</h3>
+                        <p class="fd-action-text">View student accounts</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <a class="fd-action"
+                   href="#recent-payments">
+                    <div class="fd-action-icon">🧾</div>
+                    <div>
+                        <h3 class="fd-action-title">Payment Receipts</h3>
+                        <p class="fd-action-text">Open recorded receipts</p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Pending Fees -->
+    <section class="fd-section">
+
+        <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+            <div>
+                <h2 class="fd-section-title">Pending Student Fees</h2>
+                <p class="fd-section-description mb-0">
+                    Students who still have an outstanding balance
+                </p>
+            </div>
+
+            <span class="badge bg-warning text-dark align-self-start">
+                {{ pending_fees|length }} shown
+            </span>
+        </div>
+
+        <div class="fd-table-wrap">
+
+            <table class="fd-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Student ID</th>
+                        <th>Course</th>
+                        <th>Total Fee</th>
+                        <th>Paid</th>
+                        <th>Due</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for sf in pending_fees %}
+                    <tr>
+                        <td class="fw-bold">
+                            {{ sf.student.first_name }}
+                            {{ sf.student.last_name }}
+                        </td>
+
+                        <td>{{ sf.student.student_id }}</td>
+
+                        <td>
+                            {{ sf.fee_structure.course.name }}
+                        </td>
+
+                        <td>₹{{ sf.total_amount|floatformat:2 }}</td>
+
+                        <td class="text-success fw-semibold">
+                            ₹{{ sf.paid_amount|floatformat:2 }}
+                        </td>
+
+                        <td class="text-danger fw-bold">
+                            ₹{{ sf.balance_amount|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            <div class="d-flex gap-2">
+
+                                <a class="fd-btn"
+                                   href="{% url 'fees:student_fee_detail' sf.id %}">
+                                    Details
+                                </a>
+
+                                <a class="fd-btn fd-btn-green"
+                                   href="{% url 'fees:make_payment' sf.id %}">
+                                    Pay
+                                </a>
+
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="fd-empty">
+                            🎉 No pending student fees found.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+    </section>
+
+    <!-- Student Fee Accounts -->
+    <section class="fd-section" id="student-fees">
+
+        <h2 class="fd-section-title">Recent Student Fee Accounts</h2>
+        <p class="fd-section-description">
+            Open fee details or record a payment.
+        </p>
+
+        <div class="fd-table-wrap">
+
+            <table class="fd-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Student ID</th>
+                        <th>Course</th>
+                        <th>Total Fee</th>
+                        <th>Paid</th>
+                        <th>Balance</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for sf in recent_student_fees %}
+                    <tr>
+
+                        <td class="fw-bold">
+                            {{ sf.student.first_name }}
+                            {{ sf.student.last_name }}
+                        </td>
+
+                        <td>{{ sf.student.student_id }}</td>
+
+                        <td>{{ sf.fee_structure.course.name }}</td>
+
+                        <td>₹{{ sf.total_amount|floatformat:2 }}</td>
+
+                        <td class="text-success">
+                            ₹{{ sf.paid_amount|floatformat:2 }}
+                        </td>
+
+                        <td class="text-danger">
+                            ₹{{ sf.balance_amount|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {% if sf.balance_amount <= 0 %}
+                                <span class="fd-badge fd-badge-paid">
+                                    Paid
+                                </span>
+                            {% elif sf.paid_amount > 0 %}
+                                <span class="fd-badge fd-badge-partial">
+                                    Partial
+                                </span>
+                            {% else %}
+                                <span class="fd-badge fd-badge-due">
+                                    Due
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="d-flex gap-2">
+
+                                <a class="fd-btn"
+                                   href="{% url 'fees:student_fee_detail' sf.id %}">
+                                    Details
+                                </a>
+
+                                {% if sf.balance_amount > 0 %}
+                                    <a class="fd-btn fd-btn-green"
+                                       href="{% url 'fees:make_payment' sf.id %}">
+                                        Pay
+                                    </a>
+                                {% endif %}
+
+                            </div>
+                        </td>
+
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="fd-empty">
+                            No student fee accounts found.
+                            <br><br>
+                            <a class="fd-btn"
+                               href="{% url 'fees:student_fee_create' %}">
+                                Create Student Fee
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+    </section>
+
+    <!-- Recent Payments and Receipts -->
+    <section class="fd-section" id="recent-payments">
+
+        <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+            <div>
+                <h2 class="fd-section-title">Recent Payments & Receipts</h2>
+                <p class="fd-section-description mb-0">
+                    View recorded payments and open their receipts.
+                </p>
+            </div>
+
+            <div class="text-sm-end">
+                <div class="small text-secondary">Recorded Payments</div>
+                <div class="fs-5 fw-bold text-primary">
+                    {{ total_payments }}
+                </div>
+            </div>
+        </div>
+
+        <div class="fd-table-wrap">
+
+            <table class="fd-table">
+                <thead>
+                    <tr>
+                        <th>Receipt Number</th>
+                        <th>Student</th>
+                        <th>Payment Date</th>
+                        <th>Payment Method</th>
+                        <th>Transaction ID</th>
+                        <th>Amount</th>
+                        <th>Receipt</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for payment in recent_payments %}
+                    <tr>
+
+                        <td class="fw-bold">
+                            {{ payment.receipt_number }}
+                        </td>
+
+                        <td>
+                            {{ payment.student_fee.student.first_name }}
+                            {{ payment.student_fee.student.last_name }}
+                        </td>
+
+                        <td>
+                            {{ payment.payment_date|date:'d M Y' }}
+                        </td>
+
+                        <td>
+                            {{ payment.get_payment_mode_display }}
+                        </td>
+
+                        <td>
+                            {{ payment.transaction_id|default:'—' }}
+                        </td>
+
+                        <td class="text-success fw-bold">
+                            ₹{{ payment.amount|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            <a class="fd-btn"
+                               href="{% url 'fees:payment_receipt' payment.id %}">
+                                View Receipt
+                            </a>
+                        </td>
+
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="fd-empty">
+                            No payment records found yet.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+    </section>
+
+    <!-- Fee Structures -->
+    <section class="fd-section">
+
+        <div class="d-flex justify-content-between align-items-center gap-3">
+            <div>
+                <h2 class="fd-section-title">Fee Structures</h2>
+                <p class="fd-section-description mb-0">
+                    Recently configured course and semester fees.
+                </p>
+            </div>
+
+            <a class="fd-btn"
+               href="{% url 'fees:fee_structure_list' %}">
+                View All
+            </a>
+        </div>
+
+        <div class="fd-table-wrap">
+
+            <table class="fd-table">
+                <thead>
+                    <tr>
+                        <th>Course</th>
+                        <th>Semester</th>
+                        <th>Fee Amount</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for structure in fee_structures %}
+                    <tr>
+                        <td class="fw-bold">
+                            {{ structure.course.name }}
+                        </td>
+
+                        <td>
+                            {{ structure.semester.display_name }}
+                        </td>
+
+                        <td class="fw-bold text-primary">
+                            ₹{{ structure.total_fee|floatformat:2 }}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="fd-empty">
+                            No fee structures found.
+                            <br><br>
+                            <a class="fd-btn"
+                               href="{% url 'fees:fee_structure_create' %}">
+                                Create Fee Structure
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+    </section>
+
+    <!-- Footer -->
+    <div class="text-center text-white-50 small mt-4">
+        College Management System · Fees & Payments
+    </div>
+
+</div>
+</div>
+
+{% endblock %}

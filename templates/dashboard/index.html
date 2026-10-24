@@ -1,0 +1,535 @@
+{% extends "dashboard/base.html" %}
+
+
+{% block title %}
+
+College ERP Dashboard
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<h1>
+    Dashboard
+</h1>
+
+<p>
+    Welcome to College Management System
+</p>
+
+
+<!-- ========================= -->
+<!-- STATISTICS -->
+<!-- ========================= -->
+
+<div class="stats">
+
+
+    <div class="card">
+
+        <div class="card-title">
+            Total Students
+        </div>
+
+        <div class="card-number">
+            {{ total_students }}
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-title">
+            Total Faculty
+        </div>
+
+        <div class="card-number">
+            {{ total_faculty }}
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-title">
+            Total Courses
+        </div>
+
+        <div class="card-number">
+            {{ total_courses }}
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-title">
+            Total Admissions
+        </div>
+
+        <div class="card-number">
+            {{ total_admissions }}
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- SECOND ROW -->
+<!-- ========================= -->
+
+<div class="grid">
+
+
+    <!-- FEE -->
+
+    <div class="card">
+
+        <h3>
+            Fee Collection
+        </h3>
+
+        <h2>
+            ₹{{ total_fee_collection }}
+        </h2>
+
+        <p>
+            Successful payments
+        </p>
+
+    </div>
+
+
+    <!-- HOSTEL -->
+
+    <div class="card">
+
+        <h3>
+            Hostel Occupancy
+        </h3>
+
+        <h2>
+            {{ hostel_occupancy }}%
+        </h2>
+
+        <p>
+            Occupied:
+            {{ occupied_beds }}
+        </p>
+
+        <p>
+            Vacant:
+            {{ vacant_beds }}
+        </p>
+
+    </div>
+
+
+    <!-- EXAM -->
+
+    <div class="card">
+
+        <h3>
+            Exam Statistics
+        </h3>
+
+        <p>
+            Total Results:
+            <strong>
+                {{ total_results }}
+            </strong>
+        </p>
+
+        <p>
+            Passed:
+            <strong>
+                {{ passed_students }}
+            </strong>
+        </p>
+
+        <p>
+            Failed:
+            <strong>
+                {{ failed_students }}
+            </strong>
+        </p>
+
+    </div>
+
+
+</div>
+
+
+<!-- ========================= -->
+<!-- RECENT ADMISSIONS -->
+<!-- ========================= -->
+
+<div class="card" style="margin-top: 25px;">
+
+    <h2>
+        Recent Admissions
+    </h2>
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Application No.
+                </th>
+
+                <th>
+                    Student
+                </th>
+
+                <th>
+                    Course
+                </th>
+
+                <th>
+                    Status
+                </th>
+
+                <th>
+                    Date
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+        {% for admission in recent_admissions %}
+
+            <tr>
+
+                <td>
+                    {{ admission.application_number }}
+                </td>
+
+                <td>
+                    {{ admission.first_name }}
+                    {{ admission.last_name }}
+                </td>
+
+                <td>
+                    {{ admission.course.name }}
+                </td>
+
+                <td>
+                    {{ admission.get_status_display }}
+                </td>
+
+                <td>
+                    {{ admission.submitted_at|date:"d M Y" }}
+                </td>
+
+            </tr>
+
+        {% empty %}
+
+            <tr>
+
+                <td colspan="5">
+                    No recent admissions.
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- CHARTS -->
+<!-- ========================= -->
+
+<div class="grid">
+
+
+    <div class="card">
+
+        <h3>
+            Monthly Fee Collection
+        </h3>
+
+        <div style="height:300px;">
+
+            <canvas id="feeChart"></canvas>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Admission Statistics
+        </h3>
+
+        <div style="height:300px;">
+
+            <canvas id="admissionChart"></canvas>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Exam Performance
+        </h3>
+
+        <div style="height:300px;">
+
+            <canvas id="examChart"></canvas>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            Hostel Occupancy
+        </h3>
+
+        <div style="height:300px;">
+
+            <canvas id="hostelChart"></canvas>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+{{ fee_months|json_script:"fee-months-data" }}
+{{ fee_amounts|json_script:"fee-amounts-data" }}
+{{ admission_labels|json_script:"admission-labels-data" }}
+{{ admission_counts|json_script:"admission-counts-data" }}
+{{ passed_students|json_script:"passed-students-data" }}
+{{ failed_students|json_script:"failed-students-data" }}
+{{ occupied_beds|json_script:"occupied-beds-data" }}
+{{ vacant_beds|json_script:"vacant-beds-data" }}
+
+<script>
+    const dashboardData = (id) => JSON.parse(
+        document.getElementById(id).textContent
+    );
+
+    // =============================
+    // FEE CHART
+    // =============================
+
+    new Chart(
+        document.getElementById("feeChart"),
+        {
+            type: "line",
+
+            data: {
+
+                labels: dashboardData("fee-months-data"),
+
+                datasets: [
+
+                    {
+                        label: "Fee Collection",
+
+                        data: dashboardData("fee-amounts-data"),
+
+                        borderWidth: 3,
+
+                        tension: 0.3
+                    }
+
+                ]
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                scales: {
+
+                    y: {
+                        beginAtZero: true
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+
+    // =============================
+    // ADMISSION CHART
+    // =============================
+
+    new Chart(
+        document.getElementById("admissionChart"),
+        {
+
+            type: "bar",
+
+            data: {
+
+                labels: dashboardData("admission-labels-data"),
+
+                datasets: [
+
+                    {
+
+                        label: "Admissions",
+
+                        data: dashboardData("admission-counts-data"),
+
+                        borderWidth: 1
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                scales: {
+
+                    y: {
+                        beginAtZero: true
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+
+    // =============================
+    // EXAM
+    // =============================
+
+    new Chart(
+        document.getElementById("examChart"),
+        {
+
+            type: "doughnut",
+
+            data: {
+
+                labels: [
+                    "Passed",
+                    "Failed"
+                ],
+
+                datasets: [
+
+                    {
+
+                        data: [
+                            dashboardData("passed-students-data"),
+                            dashboardData("failed-students-data")
+                        ]
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false
+
+            }
+
+        }
+    );
+
+
+    // =============================
+    // HOSTEL
+    // =============================
+
+    new Chart(
+        document.getElementById("hostelChart"),
+        {
+
+            type: "doughnut",
+
+            data: {
+
+                labels: [
+                    "Occupied",
+                    "Vacant"
+                ],
+
+                datasets: [
+
+                    {
+
+                        data: [
+                            dashboardData("occupied-beds-data"),
+                            dashboardData("vacant-beds-data")
+                        ]
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false
+
+            }
+
+        }
+    );
+
+</script>
+
+{% endblock %}

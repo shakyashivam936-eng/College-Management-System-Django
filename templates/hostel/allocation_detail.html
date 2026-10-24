@@ -1,0 +1,66 @@
+<table border="1" cellpadding="10">
+
+    <tr>
+        <th>Month</th>
+        <th>Amount</th>
+        <th>Paid</th>
+        <th>Balance</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+
+    {% for fee in fees %}
+
+    <tr>
+
+        <td>
+            {{ fee.month|date:"F Y" }}
+        </td>
+
+        <td>
+            ₹{{ fee.amount }}
+        </td>
+
+        <td>
+            ₹{{ fee.paid_amount }}
+        </td>
+
+        <td>
+            ₹{{ fee.balance_amount }}
+        </td>
+
+        <td>
+            {{ fee.get_status_display }}
+        </td>
+
+        <td>
+
+            {% if fee.balance_amount > 0 %}
+
+                <a href="{% url 'hostel:hostel_fee_payment' fee.pk %}">
+                    Pay Fee
+                </a>
+
+            {% else %}
+
+                Paid
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+    {% empty %}
+
+    <tr>
+
+        <td colspan="6">
+            No hostel fees found.
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>

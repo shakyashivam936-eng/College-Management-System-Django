@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>
+        Exam Result Dashboard
+    </title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .exam-info {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .info-box {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #eee;
+        }
+
+        .pass {
+            font-weight: bold;
+        }
+
+        .fail {
+            font-weight: bold;
+        }
+
+        .button {
+            padding: 7px 12px;
+            text-decoration: none;
+            border: 1px solid #333;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>
+            Exam Result Dashboard
+        </h1>
+
+        <div class="exam-info">
+
+            <div class="info-box">
+                <strong>Exam</strong>
+                <br>
+                {{ exam.name }}
+            </div>
+
+            <div class="info-box">
+                <strong>Course</strong>
+                <br>
+                {{ exam.course.name }}
+            </div>
+
+            <div class="info-box">
+                <strong>Semester</strong>
+                <br>
+                {{ exam.semester.name }}
+            </div>
+
+            <div class="info-box">
+                <strong>Academic Year</strong>
+                <br>
+                {{ exam.academic_year }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>
+            Student Results
+        </h2>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            S.No.
+                        </th>
+
+                        <th>
+                            Student ID
+                        </th>
+
+                        <th>
+                            Student Name
+                        </th>
+
+                        <th>
+                            Total Marks
+                        </th>
+
+                        <th>
+                            Obtained
+                        </th>
+
+                        <th>
+                            Percentage
+                        </th>
+
+                        <th>
+                            Grade
+                        </th>
+
+                        <th>
+                            Result
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for item in results %}
+
+                    <tr>
+
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td>
+                            {{ item.student.student_id }}
+                        </td>
+
+                        <td>
+                            {{ item.student.first_name }}
+                            {{ item.student.last_name }}
+                        </td>
+
+                        <td>
+
+                            {% if item.result %}
+                                {{ item.result.total_marks }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if item.result %}
+                                {{ item.result.obtained_marks }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if item.result %}
+                                {{ item.result.percentage }}%
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if item.result %}
+                                {{ item.result.grade }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if item.result %}
+
+                                {{ item.result.status }}
+
+                            {% else %}
+
+                                Not Generated
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if item.result %}
+
+                                <a
+                                    class="button"
+                                    href="{% url 'exams:marksheet' item.result.id %}"
+                                    target="_blank"
+                                >
+                                    Marksheet
+                                </a>
+
+                            {% else %}
+
+                                <a
+                                    class="button"
+                                    href="{% url 'exams:generate_result' exam.id item.student.id %}"
+                                >
+                                    Generate
+                                </a>
+
+                                <a
+                                    class="button"
+                                    href="{% url 'exams:generate_all_results' exam.id %}"
+                                >
+                                    Generate All Results
+                                </a>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="9">
+                            No students found.
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

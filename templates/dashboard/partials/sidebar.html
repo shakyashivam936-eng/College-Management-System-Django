@@ -1,0 +1,83 @@
+<div class="sidebar">
+
+    <div class="logo">
+
+        🎓 College ERP
+
+    </div>
+
+
+    <div class="menu">
+
+        {% if request.user.role == "REPORTER" %}
+        <div class="menu-title">
+            Issue Reports
+        </div>
+        <a href="{% url 'dashboard:issue_submit' %}">
+            📝 Submit an issue
+        </a>
+        <a href="{% url 'dashboard:issue_mine' %}">
+            📬 My submissions
+        </a>
+        {% else %}
+        <div class="menu-title">
+            Main
+        </div>
+
+        <a href="{% url 'dashboard:index' %}">
+            🏠 Dashboard
+        </a>
+
+
+        <div class="menu-title">
+            Academic
+        </div>
+
+        <a href="{% url 'student_list' %}">
+            👨‍🎓 Students
+        </a>
+
+        <a href="{% url 'academics:faculty_list' %}">
+            👨‍🏫 Faculty
+        </a>
+
+        <a href="{% url 'academics:course_list' %}">
+            📚 Academics
+        </a>
+
+
+        <div class="menu-title">
+            Administration
+        </div>
+
+        <a href="{% url 'admission_list' %}">
+            📝 Admissions
+        </a>
+
+        <a href="{% url 'fees:dashboard' %}">
+            💰 Fees
+        </a>
+
+        <a href="{% url 'hostel:dashboard' %}">
+            🏠 Hostel
+        </a>
+
+
+        <div class="menu-title">
+            Examination
+        </div>
+
+        <a href="{% url 'exams:exam_list' %}">
+            📋 Exams
+        </a>
+
+        {% if request.user.role == "ADMIN" or request.user.is_staff or request.user.is_superuser %}
+        <a href="{% url 'dashboard:issue_manage' %}">
+            📥 Issue inbox
+        </a>
+        {% endif %}
+        {% endif %}
+
+    </div>
+
+</div>

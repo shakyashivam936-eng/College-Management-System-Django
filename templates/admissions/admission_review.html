@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Review application{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <div class="mb-4">
+            <a class="link-secondary text-decoration-none small" href="{% url 'admission_detail' admission.id %}">← Back to application</a>
+            <p class="text-primary fw-semibold text-uppercase small mt-3 mb-2">Admissions</p>
+            <h1 class="page-heading h2 mb-1">Review application</h1>
+            <p class="text-secondary mb-0">{{ admission.application_number }} · {{ admission.first_name }} {{ admission.last_name }}</p>
+        </div>
+        <section class="card p-4 p-md-5">
+            <div class="row g-3 mb-4 pb-4 border-bottom">
+                <div class="col-12 col-md-6"><div class="detail-label">Applicant</div><div class="detail-value">{{ admission.first_name }} {{ admission.last_name }}</div></div>
+                <div class="col-12 col-md-6"><div class="detail-label">Applied course</div><div class="detail-value">{{ admission.course.name }}</div></div>
+                <div class="col-12 col-md-6"><div class="detail-label">Current status</div><div class="detail-value">{{ admission.get_status_display }}</div></div>
+                <div class="col-12 col-md-6"><div class="detail-label">Submitted</div><div class="detail-value">{{ admission.submitted_at|date:'M j, Y, P' }}</div></div>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="form-label" for="id_status">Admission status</label>
+                    <select class="form-select" id="id_status" name="status" required>
+                        <option value="PENDING" {% if admission.status == 'PENDING' %}selected{% endif %}>Pending</option>
+                        <option value="UNDER_REVIEW" {% if admission.status == 'UNDER_REVIEW' %}selected{% endif %}>Under review</option>
+                        <option value="APPROVED" {% if admission.status == 'APPROVED' %}selected{% endif %}>Approved</option>
+                        <option value="REJECTED" {% if admission.status == 'REJECTED' %}selected{% endif %}>Rejected</option>
+                        <option value="CONFIRMED" {% if admission.status == 'CONFIRMED' %}selected{% endif %}>Admission confirmed</option>
+                    </select>
+                    <div class="form-text">Choose the latest status for this application.</div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label" for="id_rejection_reason">Rejection reason <span class="text-secondary fw-normal">(if applicable)</span></label>
+                    <textarea class="form-control" id="id_rejection_reason" name="rejection_reason" rows="4" placeholder="Add a short explanation if the application is rejected.">{{ admission.rejection_reason }}</textarea>
+                </div>
+                <div class="d-flex flex-column flex-sm-row gap-2 pt-4 border-top">
+                    <button class="btn btn-primary px-4" type="submit">Update status</button>
+                    <a class="btn btn-light px-4" href="{% url 'admission_detail' admission.id %}">Cancel</a>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+{% endblock %}

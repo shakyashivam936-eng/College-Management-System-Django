@@ -1,0 +1,52 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}My issue reports | College ERP{% endblock %}
+
+{% block content %}
+<div class="issue-heading">
+    <div>
+        <h1>{% if request.user.role == "REPORTER" %}My submissions{% else %}Issue reports{% endif %}</h1>
+        <p>Check the status of reports sent to the administration.</p>
+    </div>
+    {% if request.user.role == "REPORTER" %}<a class="action-link" href="{% url 'dashboard:issue_submit' %}">Submit an issue</a>{% endif %}
+</div>
+{% if messages %}{% for message in messages %}<div class="notice">{{ message }}</div>{% endfor %}{% endif %}
+<div class="issue-list">
+    {% for issue in issues %}
+    <article class="issue-card">
+        <div class="issue-meta">
+            <span>{{ issue.get_category_display }}</span>
+            <span class="status status-{{ issue.status|lower }}">{{ issue.get_status_display }}</span>
+        </div>
+        <h2>{{ issue.title }}</h2>
+        {% if request.user.role != "REPORTER" %}<p class="reporter-name">From {{ issue.created_by.get_full_name|default:issue.created_by.username }}</p>{% endif %}
+        <p class="description">{{ issue.description|linebreaksbr }}</p>
+        {% if issue.admin_note %}<div class="admin-note"><strong>Admin response</strong><br>{{ issue.admin_note|linebreaksbr }}</div>{% endif %}
+        <small>Submitted {{ issue.created_at|date:"d M Y, h:i A" }}</small>
+    </article>
+    {% empty %}
+    <div class="empty-state">No issue reports have been submitted yet.</div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .issue-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 22px; }
+    .issue-heading h1 { margin-bottom: 6px; }
+    .issue-heading p, .reporter-name, .issue-card small { color: #64748b; }
+    .action-link { padding: 10px 14px; color: white; background: #2563eb; border-radius: 7px; text-decoration: none; white-space: nowrap; }
+    .issue-list { display: grid; gap: 14px; }
+    .issue-card, .empty-state { padding: 20px; background: white; border: 1px solid #e5e7eb; border-radius: 10px; }
+    .issue-meta { display: flex; justify-content: space-between; gap: 10px; color: #475569; font-weight: 700; }
+    .issue-card h2 { margin: 12px 0 6px; font-size: 19px; }
+    .issue-card p { line-height: 1.5; }
+    .issue-card .description { color: #334155; }
+    .status { border-radius: 30px; padding: 4px 10px; background: #e2e8f0; font-size: 12px; }
+    .status-open { color: #9a3412; background: #ffedd5; }
+    .status-in_progress { color: #1d4ed8; background: #dbeafe; }
+    .status-resolved { color: #166534; background: #dcfce7; }
+    .admin-note { margin: 12px 0; padding: 12px; border-left: 3px solid #2563eb; background: #eff6ff; }
+    .notice { margin-bottom: 14px; padding: 12px; border-radius: 7px; background: #dcfce7; color: #166534; }
+</style>
+{% endblock %}

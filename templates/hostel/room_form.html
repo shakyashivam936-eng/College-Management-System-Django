@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Add room{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-12 col-lg-8"><div class="mb-4"><a class="link-secondary text-decoration-none small" href="{% url 'hostel:room_list' %}">← Back to rooms</a><h1 class="page-heading h2 mt-3 mb-1">Add room</h1><p class="text-secondary mb-0">Set its hostel, room type, capacity and monthly fee.</p></div><section class="card p-4 p-md-5"><form method="post">{% csrf_token %}{% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}{{ form.as_p }}<div class="d-flex gap-2 pt-4 border-top mt-4"><button class="btn btn-primary" type="submit">Save room</button><a class="btn btn-light" href="{% url 'hostel:room_list' %}">Cancel</a></div></form></section></div></div>
+{% endblock %}

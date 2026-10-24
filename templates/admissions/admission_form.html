@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Apply for admission{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+        <div class="mb-4">
+            <p class="text-primary fw-semibold text-uppercase small mb-2">Admissions</p>
+            <h1 class="page-heading h2 mb-1">Apply for admission</h1>
+            <p class="text-secondary mb-0">Complete the application and attach the requested documents.</p>
+        </div>
+        <section class="card p-4 p-md-5">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+
+                <div class="mb-4">
+                    <h2 class="h5 fw-semibold mb-1">Personal information</h2>
+                    <p class="text-secondary small mb-3">Tell us about the applicant and their family.</p>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.first_name %}</div>
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.last_name %}</div>
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.father_name %}</div>
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.mother_name %}</div>
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.date_of_birth %}</div>
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.gender %}</div>
+                    </div>
+                </div>
+
+                <div class="mb-4 pt-4 border-top">
+                    <h2 class="h5 fw-semibold mb-1">Contact information</h2>
+                    <p class="text-secondary small mb-3">Provide contact details and current address.</p>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.email %}</div>
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.phone %}</div>
+                        <div class="col-12">{% include 'admissions/_field.html' with field=form.address %}</div>
+                        <div class="col-12 col-md-4">{% include 'admissions/_field.html' with field=form.city %}</div>
+                        <div class="col-12 col-md-4">{% include 'admissions/_field.html' with field=form.state %}</div>
+                        <div class="col-12 col-md-4">{% include 'admissions/_field.html' with field=form.pincode %}</div>
+                    </div>
+                </div>
+
+                <div class="mb-4 pt-4 border-top">
+                    <h2 class="h5 fw-semibold mb-1">Academic information</h2>
+                    <p class="text-secondary small mb-3">Share the course and previous education details.</p>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.course %}</div>
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.previous_school %}</div>
+                        <div class="col-12 col-md-4">{% include 'admissions/_field.html' with field=form.high_school_marks %}</div>
+                        <div class="col-12 col-md-4">{% include 'admissions/_field.html' with field=form.intermediate_marks %}</div>
+                        <div class="col-12 col-md-4">{% include 'admissions/_field.html' with field=form.passing_year %}</div>
+                    </div>
+                </div>
+
+                <div class="mb-4 pt-4 border-top">
+                    <h2 class="h5 fw-semibold mb-1">Documents</h2>
+                    <p class="text-secondary small mb-3">Upload a recent photo and available supporting documents.</p>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.profile_photo %}</div>
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.identity_proof %}</div>
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.high_school_marksheet %}</div>
+                        <div class="col-12 col-md-6">{% include 'admissions/_field.html' with field=form.intermediate_marksheet %}</div>
+                        <div class="col-12">{% include 'admissions/_field.html' with field=form.transfer_certificate %}</div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row gap-2 pt-4 border-top">
+                    <button class="btn btn-primary px-4" type="submit">Submit application</button>
+                    <a class="btn btn-light px-4" href="{% url 'admission_list' %}">Cancel</a>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+{% endblock %}

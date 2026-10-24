@@ -1,0 +1,462 @@
+```html
+{% extends 'base.html' %}
+
+{% block title %}Create Account | College Portal{% endblock %}
+
+{% block content %}
+
+<style>
+    .register-wrapper {
+        padding: 35px 12px 50px;
+    }
+
+    .register-card {
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+        border-radius: 22px;
+        background: #ffffff;
+        box-shadow: 0 20px 60px rgba(31, 41, 55, 0.10);
+    }
+
+    .register-banner {
+        position: relative;
+        overflow: hidden;
+        padding: 30px 25px;
+        color: white;
+        background: linear-gradient(135deg, #312e81, #4f46e5, #7c3aed);
+    }
+
+    .register-banner::before,
+    .register-banner::after {
+        position: absolute;
+        content: "";
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .register-banner::before {
+        width: 180px;
+        height: 180px;
+        top: -80px;
+        right: -30px;
+    }
+
+    .register-banner::after {
+        width: 120px;
+        height: 120px;
+        bottom: -75px;
+        left: 30%;
+    }
+
+    .brand-icon {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        width: 54px;
+        height: 54px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.15);
+        font-size: 27px;
+    }
+
+    .register-banner h1 {
+        position: relative;
+        z-index: 1;
+        margin: 0 0 8px;
+        font-size: 27px;
+        font-weight: 800;
+    }
+
+    .register-banner p {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        color: #e0e7ff;
+        font-size: 14px;
+    }
+
+    .register-body {
+        padding: 30px;
+    }
+
+    .register-label {
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .register-body form p {
+        margin-bottom: 17px;
+    }
+
+    .register-body form label {
+        display: block;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .register-body form input,
+    .register-body form select,
+    .register-body form textarea {
+        display: block;
+        width: 100%;
+        min-height: 46px;
+        padding: 11px 13px;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        background: #f9fafb;
+        color: #111827;
+        font-size: 14px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .register-body form input:focus,
+    .register-body form select:focus,
+    .register-body form textarea:focus {
+        border-color: #6366f1;
+        outline: none;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+    }
+
+    .register-body form .helptext {
+        display: block;
+        margin-top: 5px;
+        color: #6b7280;
+        font-size: 11px;
+    }
+
+    .register-body form ul {
+        padding-left: 20px;
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    .register-body form .errorlist {
+        margin: 5px 0;
+        padding: 0;
+        color: #dc2626;
+        list-style: none;
+        font-size: 12px;
+    }
+
+    .register-submit {
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: 11px;
+        color: white;
+        background: linear-gradient(135deg, #4338ca, #7c3aed);
+        font-size: 15px;
+        font-weight: 750;
+        box-shadow: 0 7px 18px rgba(79, 70, 229, 0.2);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .register-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(79, 70, 229, 0.3);
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        margin: 24px 0;
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+    .divider::before,
+    .divider::after {
+        flex: 1;
+        height: 1px;
+        background: #e5e7eb;
+        content: "";
+    }
+
+    .social-buttons {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 11px;
+    }
+
+    .social-button {
+        display: flex;
+        min-height: 47px;
+        align-items: center;
+        justify-content: center;
+        gap: 11px;
+        padding: 11px 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        background: white;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+        transition: background 0.2s, border-color 0.2s;
+    }
+
+    .social-button:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+        color: #111827;
+    }
+
+    .social-button svg {
+        width: 19px;
+        height: 19px;
+        flex-shrink: 0;
+    }
+
+    .google-icon {
+        color: #4285f4;
+    }
+
+    .facebook-icon {
+        color: #1877f2;
+    }
+
+    .x-icon {
+        color: #111827;
+    }
+
+    .register-footer {
+        padding: 0 20px 28px;
+        color: #6b7280;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .register-footer a {
+        color: #4f46e5;
+        font-weight: 750;
+        text-decoration: none;
+    }
+
+    .register-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .security-note {
+        margin-top: 18px;
+        color: #6b7280;
+        font-size: 11px;
+        text-align: center;
+    }
+
+    @media (max-width: 575px) {
+        .register-wrapper {
+            padding: 15px 4px 30px;
+        }
+
+        .register-card {
+            border-radius: 16px;
+        }
+
+        .register-banner {
+            padding: 25px 20px;
+        }
+
+        .register-banner h1 {
+            font-size: 23px;
+        }
+
+        .register-body {
+            padding: 22px 18px;
+        }
+    }
+</style>
+
+<div class="container register-wrapper">
+
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+
+            <section class="register-card">
+
+                <!-- HEADER -->
+
+                <div class="register-banner">
+
+                    <div class="brand-icon">
+                        🎓
+                    </div>
+
+                    <h1>Create your account</h1>
+
+                    <p>
+                        Join your college community and manage your
+                        academic journey in one place.
+                    </p>
+
+                </div>
+
+                <!-- REGISTRATION FORM -->
+
+                <div class="register-body">
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger rounded-3">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" novalidate>
+
+                        {% csrf_token %}
+
+                        {% for field in form %}
+
+                            <div class="mb-3">
+
+                                {{ field.label_tag }}
+
+                                {{ field }}
+
+                                {% if field.help_text %}
+                                    <div class="form-text">
+                                        {{ field.help_text|safe }}
+                                    </div>
+                                {% endif %}
+
+                                {% for error in field.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+                        {% endfor %}
+
+                        <div class="alert alert-light border rounded-3 small">
+                            <strong>Account security:</strong>
+                            Admin access should be granted only by an
+                            authorized administrator.
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="register-submit">
+
+                            Create Account &nbsp; →
+                        </button>
+
+                    </form>
+
+                    <!-- SOCIAL LOGIN DIVIDER -->
+
+                    <div class="divider">
+                        OR CONTINUE WITH
+                    </div>
+
+                    <!-- SOCIAL AUTHENTICATION -->
+
+                    <div class="social-buttons">
+
+                        <!-- GOOGLE -->
+
+                        <a
+                            href="{% url 'google_login' %}"
+                            class="social-button">
+
+                            <svg class="google-icon"
+                                 viewBox="0 0 48 48"
+                                 aria-hidden="true">
+
+                                <path fill="#EA4335"
+                                      d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+                                      transform="translate(0 3)"/>
+
+                                <path fill="#4285F4"
+                                      d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.74 7.18l7.65 5.94c4.46-4.12 7.13-10.18 7.13-17.59z"/>
+
+                                <path fill="#FBBC05"
+                                      d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.94 23.94 0 0 0 0 21.56l7.98-6.19z"
+                                      transform="translate(0 3)"/>
+
+                                <path fill="#34A853"
+                                      d="M24 48c6.48 0 11.93-2.13 15.9-5.86l-7.65-5.94c-2.13 1.43-4.88 2.28-8.25 2.28-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+                                      transform="translate(0 -3)"/>
+
+                            </svg>
+
+                            Continue with Google
+                        </a>
+
+                        <!-- FACEBOOK -->
+
+                        <a
+                            href="{% url 'facebook_login' %}"
+                            class="social-button">
+
+                            <svg class="facebook-icon"
+                                 viewBox="0 0 24 24"
+                                 aria-hidden="true">
+
+                                <path fill="currentColor"
+                                      d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.019 4.388 11.016 10.125 11.927v-8.437H7.078v-3.49h3.047V9.412c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.98h-1.514c-1.49 0-1.956.93-1.956 1.885v2.257h3.328l-.532 3.49h-2.796V24C19.612 23.089 24 18.092 24 12.073z"/>
+
+                            </svg>
+
+                            Continue with Facebook
+                        </a>
+
+                        <!-- X / TWITTER -->
+
+                        <a
+                            href="{% url 'twitter_login' %}"
+                            class="social-button">
+
+                            <svg class="x-icon"
+                                 viewBox="0 0 24 24"
+                                 aria-hidden="true">
+
+                                <path fill="currentColor"
+                                      d="M18.9 2H22l-6.78 7.75L23.2 22h-6.25l-4.9-7.36L5.6 22H2.47l7.25-8.29L1.8 2h6.4l4.43 6.96L18.9 2zm-1.1 18h1.73L7.27 3.89H5.41L17.8 20z"/>
+
+                            </svg>
+
+                            Continue with X (Twitter)
+                        </a>
+
+                    </div>
+
+                    <div class="security-note">
+                        🔒 Your account information should be kept secure.
+                    </div>
+
+                </div>
+
+                <!-- FOOTER -->
+
+                <div class="register-footer">
+
+                    Already have an account?
+
+                    <a href="{% url 'login' %}">
+                        Sign in
+                    </a>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

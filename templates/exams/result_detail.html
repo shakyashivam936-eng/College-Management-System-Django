@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Student Result</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .student-info {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #f2f2f2;
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <h1>College Management System</h1>
+
+    <h2>Examination Result</h2>
+
+</div>
+
+
+<div class="student-info">
+
+    <p>
+        <strong>Student ID:</strong>
+        {{ result.student.student_id }}
+    </p>
+
+    <p>
+        <strong>Name:</strong>
+        {{ result.student.first_name }}
+        {{ result.student.last_name }}
+    </p>
+
+    <p>
+        <strong>Course:</strong>
+        {{ result.exam.course.name }}
+    </p>
+
+    <p>
+        <strong>Semester:</strong>
+        {{ result.exam.semester.name }}
+    </p>
+
+    <p>
+        <strong>Exam:</strong>
+        {{ result.exam.name }}
+    </p>
+
+</div>
+
+
+<table>
+
+    <thead>
+
+        <tr>
+            <th>Subject</th>
+            <th>Max Marks</th>
+            <th>Marks Obtained</th>
+            <th>Attendance</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for mark in marks %}
+
+        <tr>
+
+            <td>
+                {{ mark.exam_schedule.subject.name }}
+            </td>
+
+            <td>
+                {{ mark.exam_schedule.max_marks }}
+            </td>
+
+            <td>
+                {{ mark.marks_obtained }}
+            </td>
+
+            <td>
+                {{ mark.get_attendance_display }}
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+
+<div class="result-box">
+
+    <p>
+        <strong>Total Marks:</strong>
+        {{ result.total_marks }}
+    </p>
+
+    <p>
+        <strong>Obtained Marks:</strong>
+        {{ result.obtained_marks }}
+    </p>
+
+    <p>
+        <strong>Percentage:</strong>
+        {{ result.percentage }}%
+    </p>
+
+    <p>
+        <strong>Grade:</strong>
+        {{ result.grade }}
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+        {{ result.status }}
+    </p>
+    <a
+    href="{% url 'exams:marksheet' result.id %}"
+    target="_blank"
+>
+    <button>
+        View Marksheet
+    </button>
+</a>
+
+</div>
+
+</body>
+</html>

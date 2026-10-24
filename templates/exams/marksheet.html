@@ -1,0 +1,789 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Marksheet - {{ result.student.student_id }}</title>
+
+    <style>
+        :root {
+            --primary: #4338ca;
+            --primary-dark: #312e81;
+            --secondary: #7c3aed;
+            --background: #f1f5f9;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --success: #15803d;
+            --danger: #b91c1c;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 35px 18px;
+            background: var(--background);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* ACTION BUTTONS */
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .action-button {
+            border: none;
+            border-radius: 8px;
+            padding: 11px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .print-button {
+            color: white;
+            background: var(--primary);
+        }
+
+        .print-button:hover {
+            background: var(--primary-dark);
+        }
+
+        /* MAIN MARKSHEET */
+
+        .marksheet {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 15px 45px rgba(15, 23, 42, 0.12);
+        }
+
+        /* HEADER */
+
+        .college-header {
+            position: relative;
+            padding: 35px 25px 30px;
+            text-align: center;
+            color: white;
+            background: linear-gradient(
+                135deg,
+                #312e81 0%,
+                #4338ca 50%,
+                #7c3aed 100%
+            );
+        }
+
+        .college-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 68px;
+            height: 68px;
+            margin: 0 auto 15px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .college-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .college-header h2 {
+            display: inline-block;
+            margin: 15px 0 8px;
+            padding: 7px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 30px;
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+
+        .college-header p {
+            margin: 8px 0 0;
+            color: #e0e7ff;
+            font-size: 14px;
+        }
+
+        /* CONTENT */
+
+        .content {
+            padding: 30px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 18px;
+            color: var(--primary-dark);
+            font-size: 18px;
+            font-weight: 750;
+        }
+
+        .section-title::before {
+            content: "";
+            display: inline-block;
+            width: 5px;
+            height: 23px;
+            border-radius: 5px;
+            background: var(--secondary);
+        }
+
+        /* STUDENT INFORMATION */
+
+        .student-info {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+
+        .info-card {
+            padding: 15px 17px;
+            background: #f8faff;
+            border: 1px solid #e0e7ff;
+            border-radius: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .info-label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .info-value {
+            color: #1e1b4b;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        /* MARKS TABLE */
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .marks-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .marks-table thead {
+            color: white;
+            background: linear-gradient(
+                100deg,
+                var(--primary-dark),
+                var(--primary)
+            );
+        }
+
+        .marks-table th {
+            padding: 15px 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+        }
+
+        .marks-table td {
+            padding: 14px 10px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .marks-table tbody tr:nth-child(even) {
+            background: #f8faff;
+        }
+
+        .marks-table tbody tr:hover {
+            background: #eef2ff;
+        }
+
+        .marks-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .subject-name {
+            text-align: left !important;
+            font-weight: 650;
+            color: #334155;
+        }
+
+        .marks-value {
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        /* STATUS BADGES */
+
+        .badge {
+            display: inline-block;
+            min-width: 75px;
+            padding: 5px 11px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .badge-pass {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .badge-fail {
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .badge-absent {
+            color: #92400e;
+            background: #fef3c7;
+        }
+
+        /* RESULT SUMMARY */
+
+        .summary-section {
+            margin-top: 32px;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            padding: 18px 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .summary-card:nth-child(1) {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+        .summary-card:nth-child(2) {
+            background: #f5f3ff;
+            border-color: #ddd6fe;
+        }
+
+        .summary-card:nth-child(3) {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+        }
+
+        .summary-card:nth-child(4) {
+            background: #fff7ed;
+            border-color: #fed7aa;
+        }
+
+        .summary-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .summary-value {
+            display: block;
+            color: #1e293b;
+            font-size: 23px;
+            font-weight: 850;
+            overflow-wrap: anywhere;
+        }
+
+        .result-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 20px 22px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+
+        .result-panel h3 {
+            margin: 0 0 4px;
+            color: #334155;
+            font-size: 15px;
+        }
+
+        .result-panel p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .result-status {
+            display: inline-block;
+            padding: 9px 22px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 850;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .result-pass {
+            color: #166534;
+            background: #dcfce7;
+            border: 1px solid #86efac;
+        }
+
+        .result-fail {
+            color: #991b1b;
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+        }
+
+        /* SIGNATURES */
+
+        .footer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 65px;
+            padding-bottom: 15px;
+        }
+
+        .signature {
+            padding-top: 12px;
+            border-top: 1px solid #94a3b8;
+            text-align: center;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 750;
+        }
+
+        .signature small {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 400;
+        }
+
+        .document-note {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border);
+            text-align: center;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 700px) {
+            body {
+                padding: 15px 8px;
+            }
+
+            .content {
+                padding: 20px 14px;
+            }
+
+            .college-header {
+                padding: 28px 15px;
+            }
+
+            .college-header h1 {
+                font-size: 21px;
+            }
+
+            .student-info {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-cards {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .result-panel {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .footer {
+                gap: 25px;
+            }
+
+            .marks-table th,
+            .marks-table td {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+        }
+
+        /* PRINT */
+
+        @page {
+            size: A4 portrait;
+            margin: 10mm;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                background: white;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .page-container {
+                max-width: none;
+            }
+
+            .actions {
+                display: none !important;
+            }
+
+            .marksheet {
+                overflow: visible;
+                border: 1px solid #cbd5e1;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .college-header {
+                break-inside: avoid;
+            }
+
+            .content {
+                padding: 18px;
+            }
+
+            .student-info,
+            .summary-section,
+            .footer {
+                break-inside: avoid;
+            }
+
+            .marks-table {
+                width: 100%;
+                font-size: 10px;
+            }
+
+            .marks-table th,
+            .marks-table td {
+                padding: 8px 5px;
+                font-size: 10px;
+            }
+
+            .marks-table tbody tr {
+                break-inside: avoid;
+            }
+
+            .info-card,
+            .summary-card,
+            .result-panel {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page-container">
+
+    <!-- ACTION BUTTON -->
+
+    <div class="actions">
+        <button
+            class="action-button print-button"
+            type="button"
+            onclick="window.print()">
+            🖨 Print Marksheet
+        </button>
+    </div>
+
+    <div class="marksheet">
+
+        <!-- COLLEGE HEADER -->
+
+        <header class="college-header">
+
+            <div class="college-logo">CMS</div>
+
+            <h1>COLLEGE MANAGEMENT SYSTEM</h1>
+
+            <h2>EXAMINATION MARKSHEET</h2>
+
+            <p>
+                Academic Year:
+                <strong>{{ result.exam.academic_year }}</strong>
+            </p>
+
+        </header>
+
+        <main class="content">
+
+            <!-- STUDENT INFORMATION -->
+
+            <section>
+                <h2 class="section-title">Student Information</h2>
+
+                <div class="student-info">
+
+                    <div class="info-card">
+                        <span class="info-label">Student ID</span>
+                        <span class="info-value">
+                            {{ result.student.student_id }}
+                        </span>
+                    </div>
+
+                    <div class="info-card">
+                        <span class="info-label">Student Name</span>
+                        <span class="info-value">
+                            {{ result.student.first_name }}
+                            {{ result.student.last_name }}
+                        </span>
+                    </div>
+
+                    <div class="info-card">
+                        <span class="info-label">Course</span>
+                        <span class="info-value">
+                            {{ result.exam.course.name }}
+                        </span>
+                    </div>
+
+                    <div class="info-card">
+                        <span class="info-label">Semester</span>
+                        <span class="info-value">
+                            {{ result.exam.semester.name }}
+                        </span>
+                    </div>
+
+                    <div class="info-card">
+                        <span class="info-label">Examination</span>
+                        <span class="info-value">
+                            {{ result.exam.name }}
+                        </span>
+                    </div>
+
+                    <div class="info-card">
+                        <span class="info-label">Exam Type</span>
+                        <span class="info-value">
+                            {{ result.exam.exam_type }}
+                        </span>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SUBJECT MARKS -->
+
+            <section>
+                <h2 class="section-title">Subject-wise Marks</h2>
+
+                <div class="table-wrapper">
+                    <table class="marks-table">
+
+                        <thead>
+                            <tr>
+                                <th>S.No.</th>
+                                <th>Subject</th>
+                                <th>Max Marks</th>
+                                <th>Pass Marks</th>
+                                <th>Obtained</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for mark in marks %}
+
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+
+                                <td class="subject-name">
+                                    {{ mark.exam_schedule.subject.name }}
+                                </td>
+
+                                <td>
+                                    {{ mark.exam_schedule.max_marks }}
+                                </td>
+
+                                <td>
+                                    {{ mark.exam_schedule.pass_marks }}
+                                </td>
+
+                                <td class="marks-value">
+                                    {{ mark.marks_obtained }}
+                                </td>
+
+                                <td>
+                                    {% if mark.attendance == "ABSENT" %}
+
+                                        <span class="badge badge-absent">
+                                            Absent
+                                        </span>
+
+                                    {% elif mark.marks_obtained >= mark.exam_schedule.pass_marks %}
+
+                                        <span class="badge badge-pass">
+                                            Pass
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge badge-fail">
+                                            Fail
+                                        </span>
+
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+                                <td colspan="6">
+                                    No subject marks are available.
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- RESULT SUMMARY -->
+
+            <section class="summary-section">
+
+                <h2 class="section-title">Result Summary</h2>
+
+                <div class="summary-cards">
+
+                    <div class="summary-card">
+                        <span class="summary-label">Total Marks</span>
+                        <span class="summary-value">
+                            {{ result.total_marks }}
+                        </span>
+                    </div>
+
+                    <div class="summary-card">
+                        <span class="summary-label">Obtained Marks</span>
+                        <span class="summary-value">
+                            {{ result.obtained_marks }}
+                        </span>
+                    </div>
+
+                    <div class="summary-card">
+                        <span class="summary-label">Percentage</span>
+                        <span class="summary-value">
+                            {{ result.percentage }}%
+                        </span>
+                    </div>
+
+                    <div class="summary-card">
+                        <span class="summary-label">Grade</span>
+                        <span class="summary-value">
+                            {{ result.grade }}
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="result-panel">
+
+                    <div>
+                        <h3>Final Examination Result</h3>
+                        <p>Official result recorded for this examination.</p>
+                    </div>
+
+                    {% if result.status == "PASS" %}
+
+                        <span class="result-status result-pass">
+                            ✓ {{ result.status }}
+                        </span>
+
+                    {% else %}
+
+                        <span class="result-status result-fail">
+                            {{ result.status }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+            <!-- SIGNATURES -->
+
+            <footer class="footer">
+
+                <div class="signature">
+                    Controller of Examination
+                    <small>Authorized Signature</small>
+                </div>
+
+                <div class="signature">
+                    Principal
+                    <small>College Authority</small>
+                </div>
+
+            </footer>
+
+            <div class="document-note">
+                This marksheet is generated by the College Management System.
+                Verify the result with the college examination department if required.
+            </div>
+
+        </main>
+
+    </div>
+</div>
+
+</body>
+</html>
+```

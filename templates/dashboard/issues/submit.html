@@ -1,0 +1,39 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Submit an issue | College ERP{% endblock %}
+
+{% block content %}
+<div class="issue-wrap">
+    <a href="{% url 'dashboard:issue_mine' %}">My submissions →</a>
+    <h1>Submit an issue</h1>
+    <p>Describe a problem in the college system. The administration will review your submission.</p>
+    {% if messages %}
+        {% for message in messages %}<div class="notice">{{ message }}</div>{% endfor %}
+    {% endif %}
+    <form method="post" class="issue-form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+        {% endfor %}
+        <button type="submit">Send to administration</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .issue-wrap { max-width: 760px; margin: 0 auto; }
+    .issue-wrap > a { color: #2563eb; text-decoration: none; }
+    .issue-wrap h1 { margin-bottom: 8px; }
+    .issue-wrap p { color: #64748b; }
+    .issue-form { display: grid; gap: 10px; margin-top: 22px; padding: 24px; background: white; border-radius: 12px; box-shadow: 0 3px 12px rgba(0,0,0,.06); }
+    .issue-form label { margin-top: 8px; font-weight: 700; color: #334155; }
+    .issue-form input, .issue-form select, .issue-form textarea { width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 6px; font: inherit; }
+    .issue-form button { justify-self: start; border: 0; border-radius: 7px; padding: 12px 18px; color: white; background: #2563eb; font-weight: 700; cursor: pointer; }
+    .field-error { color: #b91c1c; }
+    .notice { margin: 14px 0; padding: 12px; border-radius: 7px; background: #dcfce7; color: #166534; }
+</style>
+{% endblock %}

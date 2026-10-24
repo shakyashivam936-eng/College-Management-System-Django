@@ -1,0 +1,97 @@
+.fees-page .fee-summary-card {
+    height: 100%;
+    padding: 1.25rem;
+    border: 1px solid #e5ebf4;
+    border-radius: 1rem;
+    background: linear-gradient(145deg, #fff 0%, #f8faff 100%);
+    box-shadow: 0 8px 24px rgba(23, 43, 77, .06);
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.fees-page .fee-summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(23, 43, 77, .1);
+}
+
+.fees-page .fee-summary-label {
+    color: #718096;
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .055em;
+    text-transform: uppercase;
+}
+
+.fees-page .fee-summary-value {
+    margin-top: .55rem;
+    color: #172b4d;
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    font-weight: 750;
+    letter-spacing: -.04em;
+    line-height: 1.15;
+}
+
+.fees-page .fee-summary-card.is-paid .fee-summary-value { color: #16804a; }
+.fees-page .fee-summary-card.is-due .fee-summary-value { color: #2457a7; }
+
+.fees-page .fee-table-card {
+    overflow: hidden;
+    border: 1px solid #e7ecf3;
+}
+
+.fees-page .fee-table thead th {
+    padding-top: .9rem;
+    padding-bottom: .9rem;
+    background: #f7f9fc;
+}
+
+.fees-page .fee-table tbody tr { transition: background-color .15s ease; }
+.fees-page .fee-table tbody tr:hover { background-color: #f7faff; }
+.fees-page .fee-table td { vertical-align: middle; }
+
+.fees-page .fee-amount { color: #172b4d; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fees-page .fee-balance { color: #a65d00; font-weight: 700; }
+
+.fees-page .fee-action {
+    min-width: 6rem;
+    font-weight: 600;
+    box-shadow: 0 3px 9px rgba(36, 87, 167, .12);
+}
+
+.fees-page .fee-form-section {
+    padding: 1rem 1.1rem;
+    border: 1px solid #e8edf5;
+    border-radius: .85rem;
+    background: #fbfcfe;
+}
+
+.fees-page .fee-form-section .form-label,
+.fees-page form label { margin-bottom: .45rem; }
+
+.fees-page .fee-payment-banner {
+    padding: 1.1rem 1.25rem;
+    border: 1px solid #dce8fb;
+    border-radius: .85rem;
+    background: linear-gradient(110deg, #f1f6ff, #fbfdff);
+}
+
+.fees-page .fee-receipt-mark {
+    display: inline-grid;
+    width: 3rem;
+    height: 3rem;
+    place-items: center;
+    border-radius: 50%;
+    background: #e6f6ed;
+    color: #16804a;
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+@media (max-width: 575.98px) {
+    .fees-page .fee-action { min-width: auto; }
+    .fees-page .fee-table > :not(caption) > * > * { padding: .7rem .6rem; }
+}
+
+@media print {
+    .fees-page .fee-summary-card,
+    .fees-page .card { box-shadow: none; }
+}

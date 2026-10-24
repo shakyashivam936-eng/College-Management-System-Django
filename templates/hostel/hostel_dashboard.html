@@ -1,0 +1,1020 @@
+{% extends 'base.html' %}
+
+{% block title %}Hostel Management Dashboard{% endblock %}
+
+{% block content %}
+
+<style>
+    .hostel-dashboard {
+        position: relative;
+        min-height: 100vh;
+        padding: 30px 15px;
+        overflow: hidden;
+        border-radius: 20px;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(15, 23, 42, .94),
+                rgba(49, 46, 129, .89),
+                rgba(8, 145, 178, .82)
+            ),
+            url('/static/images/hostel-dashboard-bg.jpg') center/cover no-repeat;
+    }
+
+    .hostel-dashboard::before,
+    .hostel-dashboard::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        filter: blur(2px);
+    }
+
+    .hostel-dashboard::before {
+        width: 320px;
+        height: 320px;
+        top: -130px;
+        right: -80px;
+        background: rgba(56, 189, 248, .15);
+    }
+
+    .hostel-dashboard::after {
+        width: 360px;
+        height: 360px;
+        bottom: -180px;
+        left: -120px;
+        background: rgba(167, 139, 250, .15);
+    }
+
+    .hostel-container {
+        position: relative;
+        z-index: 1;
+        max-width: 1500px;
+        margin: 0 auto;
+    }
+
+    .hostel-heading {
+        color: #fff;
+        font-size: clamp(28px, 4vw, 38px);
+        font-weight: 800;
+        letter-spacing: -.7px;
+    }
+
+    .hostel-subtitle {
+        color: #cbd5e1;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .hostel-eyebrow {
+        color: #67e8f9;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .hostel-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 43px;
+        padding: 11px 17px;
+        border: 1px solid transparent;
+        border-radius: 11px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+    .hostel-btn-primary {
+        background: linear-gradient(120deg, #4f46e5, #2563eb);
+        color: #fff;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, .22);
+    }
+
+    .hostel-btn-primary:hover {
+        transform: translateY(-2px);
+        color: #fff;
+        box-shadow: 0 12px 25px rgba(37, 99, 235, .35);
+    }
+
+    .hostel-btn-light {
+        border-color: #e2e8f0;
+        background: #fff;
+        color: #334155;
+    }
+
+    .hostel-btn-light:hover {
+        border-color: #a5b4fc;
+        background: #eef2ff;
+        color: #4338ca;
+    }
+
+    .hostel-stat-card {
+        position: relative;
+        height: 100%;
+        padding: 23px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, .7);
+        border-radius: 19px;
+        background: rgba(255, 255, 255, .97);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, .12);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .hostel-stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 38px rgba(0, 0, 0, .18);
+    }
+
+    .hostel-stat-card::after {
+        position: absolute;
+        right: -24px;
+        bottom: -35px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: var(--stat-soft);
+        content: "";
+    }
+
+    .hostel-stat-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .hostel-stat-label {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .hostel-stat-value {
+        margin-top: 12px;
+        color: #172554;
+        font-size: clamp(29px, 3vw, 37px);
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .hostel-stat-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        flex-shrink: 0;
+        border-radius: 15px;
+        background: var(--stat-soft);
+        color: var(--stat-color);
+        font-size: 25px;
+    }
+
+    .hostel-stat-footer {
+        margin-top: 15px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .stat-blue {
+        --stat-color: #2563eb;
+        --stat-soft: #dbeafe;
+    }
+
+    .stat-purple {
+        --stat-color: #7c3aed;
+        --stat-soft: #ede9fe;
+    }
+
+    .stat-cyan {
+        --stat-color: #0891b2;
+        --stat-soft: #cffafe;
+    }
+
+    .stat-orange {
+        --stat-color: #ea580c;
+        --stat-soft: #ffedd5;
+    }
+
+    .stat-green {
+        --stat-color: #059669;
+        --stat-soft: #d1fae5;
+    }
+
+    .hostel-panel {
+        margin-top: 25px;
+        padding: 25px;
+        border: 1px solid rgba(255, 255, 255, .7);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, .98);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, .12);
+    }
+
+    .hostel-panel-title {
+        margin-bottom: 5px;
+        color: #172554;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .hostel-panel-subtitle {
+        margin-bottom: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .hostel-action-card {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        height: 100%;
+        padding: 17px;
+        border: 1px solid #e2e8f0;
+        border-radius: 15px;
+        background: #fff;
+        color: #172554;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+    .hostel-action-card:hover {
+        transform: translateY(-3px);
+        border-color: #a5b4fc;
+        background: #f8faff;
+        color: #4338ca;
+        box-shadow: 0 8px 22px rgba(79, 70, 229, .08);
+    }
+
+    .hostel-action-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+        border-radius: 13px;
+        background: var(--action-bg, #eef2ff);
+        color: var(--action-color, #4338ca);
+        font-size: 23px;
+    }
+
+    .hostel-action-title {
+        margin-bottom: 5px;
+        color: #1e293b;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .hostel-action-description {
+        margin-bottom: 0;
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .hostel-progress {
+        display: block;
+        width: 100%;
+        height: 12px;
+        border: 0;
+        border-radius: 20px;
+        background: #e2e8f0;
+    }
+
+    .hostel-progress-bar {
+        color: #4f46e5;
+        accent-color: #4f46e5;
+    }
+
+    .hostel-progress-bar::-webkit-progress-bar {
+        border-radius: 20px;
+        background: #e2e8f0;
+    }
+
+    .hostel-progress-bar::-webkit-progress-value {
+        border-radius: 20px;
+        background: linear-gradient(90deg, #4f46e5, #06b6d4);
+    }
+
+    .hostel-progress-bar::-moz-progress-bar {
+        border-radius: 20px;
+        background: linear-gradient(90deg, #4f46e5, #06b6d4);
+    }
+
+    .hostel-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .hostel-table {
+        width: 100%;
+        margin-top: 18px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .hostel-table thead th {
+        padding: 14px 13px;
+        border-bottom: 1px solid #e2e8f0;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .hostel-table tbody td {
+        padding: 15px 13px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .hostel-table tbody tr:hover {
+        background: #f8faff;
+    }
+
+    .hostel-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .hostel-student-name {
+        color: #172554;
+        font-weight: 800;
+    }
+
+    .hostel-muted {
+        margin-top: 4px;
+        color: #64748b;
+        font-size: 11px;
+    }
+
+    .hostel-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 30px;
+        background: #d1fae5;
+        color: #065f46;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .hostel-empty {
+        padding: 35px 15px !important;
+        color: #64748b !important;
+        text-align: center;
+    }
+
+    .hostel-empty-icon {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 30px;
+    }
+
+    .hostel-progress-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-top: 15px;
+        color: #475569;
+        font-size: 12px;
+    }
+
+    .hostel-dot {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        margin-right: 6px;
+        border-radius: 50%;
+    }
+
+    @media (max-width: 576px) {
+        .hostel-dashboard {
+            padding: 20px 9px;
+            border-radius: 12px;
+        }
+
+        .hostel-stat-card {
+            padding: 17px;
+        }
+
+        .hostel-stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            font-size: 21px;
+        }
+
+        .hostel-panel {
+            padding: 18px 14px;
+            border-radius: 15px;
+        }
+
+        .hostel-action-card {
+            padding: 14px 11px;
+        }
+
+        .hostel-action-icon {
+            width: 42px;
+            height: 42px;
+            font-size: 20px;
+        }
+    }
+</style>
+
+<div class="hostel-dashboard">
+<div class="hostel-container">
+
+    <!-- Dashboard Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+
+        <div>
+            <div class="hostel-eyebrow mb-2">
+                Accommodation Management
+            </div>
+
+            <h1 class="hostel-heading mb-2">
+                Hostel Dashboard
+            </h1>
+
+            <p class="hostel-subtitle mb-0">
+                Manage hostels, rooms, beds, student allocations and hostel fees from one place.
+            </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+
+            <a class="hostel-btn hostel-btn-light"
+               href="{% url 'hostel:hostel_list' %}">
+                🏢 All Hostels
+            </a>
+
+            <a class="hostel-btn hostel-btn-primary"
+               href="{% url 'hostel:allocation_create' %}">
+                + Allocate a Bed
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row g-3">
+
+        <div class="col-6 col-xl">
+            <section class="hostel-stat-card stat-blue">
+                <div class="hostel-stat-top">
+                    <div>
+                        <div class="hostel-stat-label">Active Hostels</div>
+                        <div class="hostel-stat-value">{{ total_hostels }}</div>
+                    </div>
+                    <div class="hostel-stat-icon">🏢</div>
+                </div>
+                <div class="hostel-stat-footer">
+                    Registered accommodation buildings
+                </div>
+            </section>
+        </div>
+
+        <div class="col-6 col-xl">
+            <section class="hostel-stat-card stat-purple">
+                <div class="hostel-stat-top">
+                    <div>
+                        <div class="hostel-stat-label">Active Rooms</div>
+                        <div class="hostel-stat-value">{{ total_rooms }}</div>
+                    </div>
+                    <div class="hostel-stat-icon">🚪</div>
+                </div>
+                <div class="hostel-stat-footer">
+                    Available registered rooms
+                </div>
+            </section>
+        </div>
+
+        <div class="col-6 col-xl">
+            <section class="hostel-stat-card stat-cyan">
+                <div class="hostel-stat-top">
+                    <div>
+                        <div class="hostel-stat-label">Active Beds</div>
+                        <div class="hostel-stat-value">{{ total_beds }}</div>
+                    </div>
+                    <div class="hostel-stat-icon">🛏️</div>
+                </div>
+                <div class="hostel-stat-footer">
+                    Total active bed capacity
+                </div>
+            </section>
+        </div>
+
+        <div class="col-6 col-xl">
+            <section class="hostel-stat-card stat-orange">
+                <div class="hostel-stat-top">
+                    <div>
+                        <div class="hostel-stat-label">Occupied Beds</div>
+                        <div class="hostel-stat-value">{{ occupied_beds }}</div>
+                    </div>
+                    <div class="hostel-stat-icon">👨‍🎓</div>
+                </div>
+                <div class="hostel-stat-footer">
+                    Beds currently occupied
+                </div>
+            </section>
+        </div>
+
+        <div class="col-6 col-xl">
+            <section class="hostel-stat-card stat-green">
+                <div class="hostel-stat-top">
+                    <div>
+                        <div class="hostel-stat-label">Vacant Beds</div>
+                        <div class="hostel-stat-value">{{ vacant_beds }}</div>
+                    </div>
+                    <div class="hostel-stat-icon">✓</div>
+                </div>
+                <div class="hostel-stat-footer">
+                    Beds available for allocation
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <!-- Occupancy Overview -->
+    <section class="hostel-panel">
+
+        <div class="d-flex flex-column flex-sm-row justify-content-between gap-2 mb-3">
+            <div>
+                <h2 class="hostel-panel-title">Hostel Occupancy Overview</h2>
+                <p class="hostel-panel-subtitle">
+                    Overview of occupied and vacant beds across all active hostels.
+                </p>
+            </div>
+
+            <div class="text-sm-end">
+                <div class="text-secondary small">Occupancy Rate</div>
+                <div class="fs-3 fw-bold text-primary">
+                    {% if total_beds > 0 %}
+                        {% widthratio occupied_beds total_beds 100 %}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <progress class="hostel-progress hostel-progress-bar"
+                  value="{{ occupied_beds }}"
+                  max="{{ total_beds|default:1 }}"
+                  aria-label="Occupied hostel beds">
+        </progress>
+
+        <div class="hostel-progress-legend">
+            <span>
+                <span class="hostel-dot" style="background:#4f46e5;"></span>
+                Occupied: {{ occupied_beds }}
+            </span>
+
+            <span>
+                <span class="hostel-dot" style="background:#d1d5db;"></span>
+                Vacant: {{ vacant_beds }}
+            </span>
+
+            <span>
+                <span class="hostel-dot" style="background:#0891b2;"></span>
+                Total beds: {{ total_beds }}
+            </span>
+        </div>
+
+    </section>
+
+    <!-- Hostel Management -->
+    <section class="hostel-panel">
+
+        <h2 class="hostel-panel-title">
+            Hostel Management
+        </h2>
+
+        <p class="hostel-panel-subtitle mb-4">
+            Manage hostel buildings, rooms, beds and student accommodation.
+        </p>
+
+        <div class="row g-3">
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <a href="{% url 'hostel:hostel_list' %}"
+                   class="hostel-action-card">
+                    <div class="hostel-action-icon"
+                         style="--action-bg:#dbeafe;--action-color:#1d4ed8;">
+                        🏢
+                    </div>
+                    <div>
+                        <h3 class="hostel-action-title">Hostel Management</h3>
+                        <p class="hostel-action-description">
+                            View and manage hostels
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <a href="{% url 'hostel:room_list' %}"
+                   class="hostel-action-card">
+                    <div class="hostel-action-icon"
+                         style="--action-bg:#ede9fe;--action-color:#6d28d9;">
+                        🚪
+                    </div>
+                    <div>
+                        <h3 class="hostel-action-title">Room Management</h3>
+                        <p class="hostel-action-description">
+                            View and manage rooms
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <a href="{% url 'hostel:bed_list' %}"
+                   class="hostel-action-card">
+                    <div class="hostel-action-icon"
+                         style="--action-bg:#cffafe;--action-color:#0e7490;">
+                        🛏️
+                    </div>
+                    <div>
+                        <h3 class="hostel-action-title">Bed Management</h3>
+                        <p class="hostel-action-description">
+                            View bed availability
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <a href="{% url 'hostel:allocation_create' %}"
+                   class="hostel-action-card">
+                    <div class="hostel-action-icon"
+                         style="--action-bg:#d1fae5;--action-color:#047857;">
+                        🔑
+                    </div>
+                    <div>
+                        <h3 class="hostel-action-title">Bed Allocation</h3>
+                        <p class="hostel-action-description">
+                            Allocate beds to students
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Hostel Forms -->
+    <section class="hostel-panel">
+
+        <h2 class="hostel-panel-title">
+            Quick Create Forms
+        </h2>
+
+        <p class="hostel-panel-subtitle mb-4">
+            Open the forms to add hostel records and manage accommodation fees.
+        </p>
+
+        <div class="row g-3">
+
+            <!-- HostelForm -->
+            <div class="col-12 col-md-6 col-xl-4">
+                <a href="{% url 'hostel:hostel_create' %}"
+                   class="hostel-action-card">
+                    <div class="hostel-action-icon"
+                         style="--action-bg:#dbeafe;--action-color:#1d4ed8;">
+                        🏨
+                    </div>
+                    <div>
+                        <h3 class="hostel-action-title">Hostel Form</h3>
+                        <p class="hostel-action-description">
+                            Create a hostel using HostelForm
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- RoomForm -->
+            <div class="col-12 col-md-6 col-xl-4">
+                <a href="{% url 'hostel:room_create' %}"
+                   class="hostel-action-card">
+                    <div class="hostel-action-icon"
+                         style="--action-bg:#ede9fe;--action-color:#6d28d9;">
+                        🚪
+                    </div>
+                    <div>
+                        <h3 class="hostel-action-title">Room Form</h3>
+                        <p class="hostel-action-description">
+                            Create a room using RoomForm
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- BedForm -->
+            <div class="col-12 col-md-6 col-xl-4">
+                <a href="{% url 'hostel:bed_create' %}"
+                   class="hostel-action-card">
+                    <div class="hostel-action-icon"
+                         style="--action-bg:#cffafe;--action-color:#0e7490;">
+                        🛏️
+                    </div>
+                    <div>
+                        <h3 class="hostel-action-title">Bed Form</h3>
+                        <p class="hostel-action-description">
+                            Create a bed using BedForm
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- HostelAllocationForm -->
+            <div class="col-12 col-md-6 col-xl-4">
+                <a href="{% url 'hostel:allocation_create' %}"
+                   class="hostel-action-card">
+                    <div class="hostel-action-icon"
+                         style="--action-bg:#d1fae5;--action-color:#047857;">
+                        🔑
+                    </div>
+                    <div>
+                        <h3 class="hostel-action-title">Hostel Allocation Form</h3>
+                        <p class="hostel-action-description">
+                            Assign a bed using HostelAllocationForm
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Hostel fee payments -->
+            <div class="col-12 col-md-6 col-xl-4">
+                <a href="#hostel-fees"
+                   class="hostel-action-card">
+                    <div class="hostel-action-icon"
+                         style="--action-bg:#ffedd5;--action-color:#c2410c;">
+                        💰
+                    </div>
+                    <div>
+                        <h3 class="hostel-action-title">Hostel Fee Payments</h3>
+                        <p class="hostel-action-description">
+                            View outstanding fees and open a payment form
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Hostel fee receipts -->
+            <div class="col-12 col-md-6 col-xl-4">
+                <a href="#hostel-receipts"
+                   class="hostel-action-card">
+                    <div class="hostel-action-icon"
+                         style="--action-bg:#fce7f3;--action-color:#be185d;">
+                        🧾
+                    </div>
+                    <div>
+                        <h3 class="hostel-action-title">Hostel Fee Receipts</h3>
+                        <p class="hostel-action-description">
+                            Open recent payment receipts
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Hostel Fee Payments -->
+    <section class="hostel-panel" id="hostel-fees">
+        <h2 class="hostel-panel-title">Outstanding Hostel Fees</h2>
+        <p class="hostel-panel-subtitle">
+            Open a fee payment form for an outstanding hostel fee.
+        </p>
+
+        <div class="hostel-table-wrap">
+            <table class="hostel-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Hostel</th>
+                        <th>Fee Month</th>
+                        <th>Balance</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fee in pending_hostel_fees %}
+                        <tr>
+                            <td>
+                                {{ fee.allocation.student.first_name }}
+                                {{ fee.allocation.student.last_name }}
+                            </td>
+                            <td>{{ fee.allocation.bed.room.hostel.name }}</td>
+                            <td>{{ fee.month|date:"F Y" }}</td>
+                            <td>₹{{ fee.balance_amount|floatformat:2 }}</td>
+                            <td>
+                                <a class="hostel-btn hostel-btn-primary"
+                                   href="{% url 'hostel:hostel_fee_payment' fee.pk %}">
+                                    Pay Fee
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="hostel-empty">
+                                No outstanding hostel fees.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Hostel Fee Receipts -->
+    <section class="hostel-panel" id="hostel-receipts">
+        <h2 class="hostel-panel-title">Recent Hostel Fee Receipts</h2>
+        <p class="hostel-panel-subtitle">
+            View receipts for the latest recorded hostel fee payments.
+        </p>
+
+        <div class="hostel-table-wrap">
+            <table class="hostel-table">
+                <thead>
+                    <tr>
+                        <th>Receipt</th>
+                        <th>Student</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in recent_hostel_payments %}
+                        <tr>
+                            <td>{{ payment.receipt_number }}</td>
+                            <td>
+                                {{ payment.hostel_fee.allocation.student.first_name }}
+                                {{ payment.hostel_fee.allocation.student.last_name }}
+                            </td>
+                            <td>{{ payment.payment_date|date:"M j, Y" }}</td>
+                            <td>₹{{ payment.amount|floatformat:2 }}</td>
+                            <td>
+                                <a class="hostel-btn hostel-btn-light"
+                                   href="{% url 'hostel:hostel_fee_receipt' payment.pk %}">
+                                    View Receipt
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="hostel-empty">
+                                No hostel fee receipts yet.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Active Allocations -->
+    <section class="hostel-panel">
+
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+
+            <div>
+                <h2 class="hostel-panel-title">
+                    Active Student Allocations
+                </h2>
+
+                <p class="hostel-panel-subtitle">
+                    Recently allocated beds and their student details.
+                </p>
+            </div>
+
+            <a class="hostel-btn hostel-btn-light"
+               href="{% url 'hostel:allocation_create' %}">
+                + New Allocation
+            </a>
+
+        </div>
+
+        <div class="hostel-table-wrap">
+
+            <table class="hostel-table">
+
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Student ID</th>
+                        <th>Hostel</th>
+                        <th>Room</th>
+                        <th>Bed</th>
+                        <th>Allocation Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for allocation in allocations %}
+
+                    <tr>
+
+                        <td>
+                            <div class="hostel-student-name">
+                                {{ allocation.student.first_name }}
+                                {{ allocation.student.last_name }}
+                            </div>
+                        </td>
+
+                        <td>
+                            {{ allocation.student.student_id }}
+                        </td>
+
+                        <td>
+                            {{ allocation.bed.room.hostel.name }}
+                        </td>
+
+                        <td>
+                            {{ allocation.bed.room.room_number }}
+                        </td>
+
+                        <td>
+                            {{ allocation.bed.bed_number }}
+                        </td>
+
+                        <td>
+                            {{ allocation.allocation_date|date:'M j, Y' }}
+                        </td>
+
+                        <td>
+                            <span class="hostel-badge">
+                                Active
+                            </span>
+                        </td>
+
+                        <td>
+                            <a class="hostel-btn hostel-btn-light"
+                               href="{% url 'hostel:allocation_detail' allocation.id %}">
+                                View Details →
+                            </a>
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="8" class="hostel-empty">
+                            <span class="hostel-empty-icon">🏨</span>
+
+                            <div class="fw-bold mb-2">
+                                No active allocations found
+                            </div>
+
+                            <div class="small mb-3">
+                                Allocate a bed to a student to see the record here.
+                            </div>
+
+                            <a class="hostel-btn hostel-btn-primary"
+                               href="{% url 'hostel:allocation_create' %}">
+                                + Allocate a Bed
+                            </a>
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+    <!-- Footer -->
+    <div class="text-center text-white-50 small mt-4">
+        College Management System · Hostel & Accommodation Management
+    </div>
+
+</div>
+</div>
+
+{% endblock %}

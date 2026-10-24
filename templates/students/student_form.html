@@ -1,0 +1,973 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} | College Portal{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =====================================
+       MAIN PAGE
+    ===================================== */
+
+    .student-page {
+        position: relative;
+        min-height: 100vh;
+        padding: 35px 15px 45px;
+        overflow: hidden;
+        isolation: isolate;
+        background: #f3f6ff;
+    }
+
+    /* Background image */
+    .student-page::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto;
+        height: 490px;
+        z-index: -2;
+
+        background:
+            linear-gradient(
+                120deg,
+                rgba(20, 85, 190, 0.82),
+                rgba(79, 70, 229, 0.64),
+                rgba(30, 64, 175, 0.45)
+            ),
+            url("{% static 'images/college-campus.jpg' %}");
+
+        background-position: center;
+        background-size: cover;
+    }
+
+    .student-page::after {
+        content: "";
+        position: absolute;
+        inset: 300px 0 0;
+        z-index: -1;
+
+        background: linear-gradient(
+            180deg,
+            rgba(243, 246, 255, 0.2),
+            #f3f6ff 380px
+        );
+
+        pointer-events: none;
+    }
+
+    .student-page * {
+        box-sizing: border-box;
+    }
+
+    /* =====================================
+       PAGE HEADER
+    ===================================== */
+
+    .student-page-header {
+        max-width: 1200px;
+        margin: 0 auto 28px;
+        color: white;
+    }
+
+    .student-breadcrumb {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+
+        margin-bottom: 16px;
+        padding: 9px 15px;
+
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 30px;
+
+        color: white;
+        background: rgba(255, 255, 255, 0.15);
+
+        font-size: 12px;
+        font-weight: 600;
+
+        backdrop-filter: blur(8px);
+    }
+
+    .student-breadcrumb a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .student-breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .student-page-title {
+        margin: 0 0 10px;
+
+        color: white;
+        font-size: clamp(27px, 4vw, 39px);
+        font-weight: 800;
+        letter-spacing: -0.8px;
+    }
+
+    .student-page-description {
+        margin: 0;
+
+        color: #eff6ff;
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    /* =====================================
+       MAIN FORM CARD
+    ===================================== */
+
+    .student-main-card {
+        display: grid;
+        grid-template-columns: 290px minmax(0, 1fr);
+
+        max-width: 1200px;
+        margin: 0 auto;
+
+        overflow: hidden;
+
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 22px;
+
+        background: white;
+
+        box-shadow:
+            0 25px 70px rgba(30, 64, 175, 0.18);
+    }
+
+    /* =====================================
+       LEFT SIDEBAR
+    ===================================== */
+
+    .student-sidebar {
+        position: relative;
+        overflow: hidden;
+
+        padding: 36px 28px;
+
+        color: white;
+
+        background: linear-gradient(
+            155deg,
+            #0284c7 0%,
+            #2563eb 48%,
+            #6d28d9 100%
+        );
+    }
+
+    .student-sidebar::before {
+        content: "";
+
+        position: absolute;
+        top: -60px;
+        right: -80px;
+
+        width: 200px;
+        height: 200px;
+
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .student-sidebar::after {
+        content: "";
+
+        position: absolute;
+        bottom: -100px;
+        left: -90px;
+
+        width: 220px;
+        height: 220px;
+
+        border: 35px solid rgba(255, 255, 255, 0.08);
+        border-radius: 50%;
+    }
+
+    .sidebar-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .sidebar-main-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 70px;
+        height: 70px;
+
+        margin-bottom: 23px;
+
+        border-radius: 20px;
+
+        color: #2563eb;
+        background: white;
+
+        font-size: 34px;
+
+        box-shadow:
+            0 10px 25px rgba(15, 23, 42, 0.12);
+    }
+
+    .sidebar-title {
+        margin-bottom: 15px;
+
+        color: white;
+        font-size: 25px;
+        font-weight: 800;
+        line-height: 1.3;
+    }
+
+    .sidebar-description {
+        margin-bottom: 25px;
+
+        color: #eff6ff;
+        font-size: 13px;
+        line-height: 1.9;
+    }
+
+    .sidebar-divider {
+        height: 1px;
+        margin: 25px 0;
+
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    .sidebar-feature {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+
+        margin-bottom: 23px;
+    }
+
+    .sidebar-feature-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 12px;
+
+        background: rgba(255, 255, 255, 0.13);
+
+        font-size: 20px;
+    }
+
+    .sidebar-feature-title {
+        margin-bottom: 5px;
+
+        color: white;
+        font-size: 13px;
+        font-weight: 750;
+    }
+
+    .sidebar-feature-text {
+        color: #dbeafe;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .sidebar-bottom-text {
+        margin-top: 38px;
+
+        color: #dbeafe;
+        font-size: 23px;
+        font-weight: 700;
+        font-style: italic;
+        line-height: 1.5;
+    }
+
+    /* =====================================
+       RIGHT FORM AREA
+    ===================================== */
+
+    .student-form-area {
+        min-width: 0;
+        padding: 32px;
+        background: #ffffff;
+    }
+
+    .student-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        margin-bottom: 28px;
+
+        color: #2563eb;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .student-back-link:hover {
+        color: #4f46e5;
+        text-decoration: underline;
+    }
+
+    .form-section-heading {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+
+        margin-bottom: 27px;
+    }
+
+    .form-heading-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+
+        border-radius: 15px;
+
+        color: #4f46e5;
+        background: #eef2ff;
+
+        font-size: 24px;
+    }
+
+    .form-section-title {
+        margin: 0 0 6px;
+
+        color: #172554;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .form-section-description {
+        margin: 0;
+
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    /* =====================================
+       DJANGO FORM FIELDS
+    ===================================== */
+
+    .student-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 19px 22px;
+    }
+
+    .student-form-grid p {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        min-width: 0;
+        margin: 0;
+    }
+
+    .student-form-grid label {
+        color: #334155;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .student-form-grid input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    .student-form-grid select,
+    .student-form-grid textarea {
+        width: 100%;
+        min-width: 0;
+        min-height: 45px;
+
+        padding: 11px 13px;
+
+        border: 1px solid #d6e0f5;
+        border-radius: 10px;
+
+        outline: none;
+
+        color: #1e293b;
+        background: #fbfdff;
+
+        font-family: inherit;
+        font-size: 13px;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .student-form-grid textarea {
+        min-height: 95px;
+        resize: vertical;
+    }
+
+    .student-form-grid input[type="file"] {
+        width: 100%;
+        min-width: 0;
+
+        padding: 10px;
+
+        border: 1px solid #d6e0f5;
+        border-radius: 10px;
+
+        color: #64748b;
+        background: #fbfdff;
+
+        font-size: 12px;
+    }
+
+    .student-form-grid input:focus,
+    .student-form-grid select:focus,
+    .student-form-grid textarea:focus {
+        border-color: #6366f1;
+        background: #ffffff;
+
+        box-shadow:
+            0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .student-form-grid input::placeholder,
+    .student-form-grid textarea::placeholder {
+        color: #94a3b8;
+    }
+
+    .student-form-grid .helptext {
+        color: #94a3b8;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .student-form-grid ul.errorlist {
+        margin: 0;
+        padding: 10px 12px;
+
+        border: 1px solid #fecaca;
+        border-radius: 9px;
+
+        color: #b91c1c;
+        background: #fef2f2;
+
+        font-size: 12px;
+        list-style: none;
+    }
+
+    .student-form-grid .errorlist li {
+        margin: 0;
+    }
+
+    .student-form-grid .errorlist + input,
+    .student-form-grid .errorlist + select,
+    .student-form-grid .errorlist + textarea {
+        border-color: #ef4444;
+    }
+
+    /* File field, checkboxes and radios */
+
+    .student-form-grid input[type="checkbox"],
+    .student-form-grid input[type="radio"] {
+        accent-color: #4f46e5;
+    }
+
+    .student-form-grid .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    /* Non-field errors */
+
+    .student-form-errors {
+        margin-bottom: 22px;
+        padding: 14px 16px;
+
+        border: 1px solid #fecaca;
+        border-radius: 12px;
+
+        color: #b91c1c;
+        background: #fef2f2;
+
+        font-size: 13px;
+    }
+
+    .student-form-errors ul {
+        margin: 8px 0 0;
+        padding-left: 20px;
+    }
+
+    /* =====================================
+       FORM FOOTER AND BUTTONS
+    ===================================== */
+
+    .student-form-footer {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+
+        margin-top: 28px;
+        padding-top: 24px;
+
+        border-top: 1px solid #e8edf5;
+    }
+
+    .student-save-button,
+    .student-cancel-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+
+        min-height: 45px;
+        padding: 12px 22px;
+
+        border-radius: 11px;
+
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 750;
+
+        text-decoration: none;
+        cursor: pointer;
+
+        transition: 0.2s ease;
+    }
+
+    .student-save-button {
+        border: none;
+
+        color: white;
+        background: linear-gradient(
+            100deg,
+            #2563eb,
+            #4f46e5,
+            #7c3aed
+        );
+
+        box-shadow:
+            0 7px 18px rgba(79, 70, 229, 0.2);
+    }
+
+    .student-save-button:hover {
+        color: white;
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 11px 25px rgba(79, 70, 229, 0.3);
+    }
+
+    .student-cancel-button {
+        border: 1px solid #d6e0f5;
+
+        color: #475569;
+        background: #ffffff;
+    }
+
+    .student-cancel-button:hover {
+        border-color: #a5b4fc;
+
+        color: #4338ca;
+        background: #eef2ff;
+    }
+
+    .student-footer-note {
+        max-width: 1200px;
+        margin: 25px auto 0;
+
+        color: #64748b;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    /* =====================================
+       RESPONSIVE
+    ===================================== */
+
+    @media (max-width: 991px) {
+
+        .student-main-card {
+            grid-template-columns: 235px minmax(0, 1fr);
+        }
+
+        .student-sidebar {
+            padding: 28px 20px;
+        }
+
+        .student-form-area {
+            padding: 25px;
+        }
+
+        .student-form-grid {
+            gap: 17px;
+        }
+    }
+
+    @media (max-width: 767px) {
+
+        .student-page {
+            padding: 25px 12px 35px;
+        }
+
+        .student-main-card {
+            grid-template-columns: minmax(0, 1fr);
+            border-radius: 17px;
+        }
+
+        .student-sidebar {
+            padding: 25px;
+        }
+
+        .sidebar-main-icon {
+            width: 58px;
+            height: 58px;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .sidebar-title {
+            font-size: 22px;
+        }
+
+        .sidebar-description {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-divider {
+            margin: 18px 0;
+        }
+
+        .sidebar-feature {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-bottom-text {
+            margin-top: 20px;
+            font-size: 19px;
+        }
+
+        .student-form-area {
+            padding: 22px 18px;
+        }
+
+        .student-form-grid {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 17px;
+        }
+
+        .student-page-title {
+            font-size: 28px;
+        }
+
+        .form-section-title {
+            font-size: 18px;
+        }
+    }
+
+    @media (max-width: 400px) {
+
+        .student-form-footer {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .student-save-button,
+        .student-cancel-button {
+            width: 100%;
+        }
+
+        .student-breadcrumb {
+            font-size: 11px;
+        }
+    }
+</style>
+
+
+<div class="student-page">
+
+    <!-- PAGE HEADER -->
+
+    <header class="student-page-header">
+
+        <div class="student-breadcrumb">
+
+            <a href="{% url 'student_list' %}">
+                🏠 Students
+            </a>
+
+            <span>›</span>
+
+            <span>
+                {{ title }}
+            </span>
+
+        </div>
+
+        <h1 class="student-page-title">
+            {{ title }}
+        </h1>
+
+        <p class="student-page-description">
+            Enter the student information below to add or update
+            their details in the college management system.
+        </p>
+
+    </header>
+
+
+    <!-- MAIN CARD -->
+
+    <div class="student-main-card">
+
+        <!-- LEFT SIDEBAR -->
+
+        <aside class="student-sidebar">
+
+            <div class="sidebar-content">
+
+                <div class="sidebar-main-icon">
+                    🎓
+                </div>
+
+                <h2 class="sidebar-title">
+                    Student<br>
+                    Registration
+                </h2>
+
+                <p class="sidebar-description">
+                    Add a student to your college management system.
+                    Fill in all required details carefully to maintain
+                    accurate academic records.
+                </p>
+
+                <div class="sidebar-divider"></div>
+
+
+                <div class="sidebar-feature">
+
+                    <div class="sidebar-feature-icon">
+                        🛡️
+                    </div>
+
+                    <div>
+
+                        <div class="sidebar-feature-title">
+                            Secure &amp; Easy
+                        </div>
+
+                        <div class="sidebar-feature-text">
+                            Maintain student records securely.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="sidebar-feature">
+
+                    <div class="sidebar-feature-icon">
+                        📄
+                    </div>
+
+                    <div>
+
+                        <div class="sidebar-feature-title">
+                            Digital Records
+                        </div>
+
+                        <div class="sidebar-feature-text">
+                            Access student information in one place.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="sidebar-feature">
+
+                    <div class="sidebar-feature-icon">
+                        👥
+                    </div>
+
+                    <div>
+
+                        <div class="sidebar-feature-title">
+                            Better Management
+                        </div>
+
+                        <div class="sidebar-feature-text">
+                            Organize academic information efficiently.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="sidebar-bottom-text">
+                    Building<br>
+                    Brighter<br>
+                    Futures ✨
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- RIGHT FORM -->
+
+        <main class="student-form-area">
+
+            <a class="student-back-link"
+               href="{% url 'student_list' %}">
+
+                <span>←</span>
+
+                Back to students
+
+            </a>
+
+
+            <div class="form-section-heading">
+
+                <div class="form-heading-icon">
+                    🎓
+                </div>
+
+                <div>
+
+                    <h2 class="form-section-title">
+                        Student Information
+                    </h2>
+
+                    <p class="form-section-description">
+                        Please fill in the details below.
+                        Fields marked with * are required.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- DJANGO FORM -->
+
+            <form method="post"
+                  enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+
+                <!-- NON-FIELD ERRORS -->
+
+                {% if form.non_field_errors %}
+
+                    <div class="student-form-errors">
+
+                        <strong>
+                            Please correct the following errors:
+                        </strong>
+
+                        {{ form.non_field_errors }}
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- FIELD ERRORS AND INPUTS -->
+
+                <div class="student-form-grid">
+
+                    {% for field in form %}
+
+                        <p>
+
+                            {{ field.label_tag }}
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+
+                                <span class="helptext">
+                                    {{ field.help_text|safe }}
+                                </span>
+
+                            {% endif %}
+
+                            {% if field.errors %}
+
+                                {{ field.errors }}
+
+                            {% endif %}
+
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- FORM BUTTONS -->
+
+                <div class="student-form-footer">
+
+                    <button class="student-save-button"
+                            type="submit">
+
+                        <span>💾</span>
+
+                        {% if 'edit' in request.path %}
+                            Update Student
+                        {% else %}
+                            Save Student
+                        {% endif %}
+
+                        <span>→</span>
+
+                    </button>
+
+
+                    <a class="student-cancel-button"
+                       href="{% url 'student_list' %}">
+
+                        <span>✕</span>
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </main>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <footer class="student-footer-note">
+
+        🔒 College Management System
+        <br>
+
+        <span style="display:inline-block; margin-top:6px;">
+            Secure student information management
+        </span>
+
+    </footer>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Hostel fee receipt{% endblock %}
+{% block content %}
+<div class="row justify-content-center py-md-3"><div class="col-12 col-lg-8 col-xl-7"><section class="card p-4 p-md-5">
+    <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 border-bottom pb-4 mb-4"><div><p class="text-primary fw-semibold text-uppercase small mb-2">Hostel payment receipt</p><h1 class="page-heading h3 mb-1">{{ payment.receipt_number }}</h1><p class="text-secondary mb-0">Payment recorded successfully</p></div><span class="badge rounded-pill text-bg-success-subtle text-success-emphasis align-self-start">Paid</span></div>
+    <div class="row g-4">
+        <div class="col-12 col-sm-6"><div class="detail-label">Student</div><div class="detail-value">{{ payment.hostel_fee.allocation.student.first_name }} {{ payment.hostel_fee.allocation.student.last_name }}</div></div>
+        <div class="col-12 col-sm-6"><div class="detail-label">Student ID</div><div class="detail-value">{{ payment.hostel_fee.allocation.student.student_id }}</div></div>
+        <div class="col-12 col-sm-6"><div class="detail-label">Hostel and room</div><div class="detail-value">{{ payment.hostel_fee.allocation.bed.room.hostel.name }} · {{ payment.hostel_fee.allocation.bed.room.room_number }}</div></div>
+        <div class="col-12 col-sm-6"><div class="detail-label">Fee month</div><div class="detail-value">{{ payment.hostel_fee.month|date:'F Y' }}</div></div>
+        <div class="col-12 col-sm-6"><div class="detail-label">Payment date</div><div class="detail-value">{{ payment.payment_date|date:'M j, Y, P' }}</div></div>
+        <div class="col-12 col-sm-6"><div class="detail-label">Payment method</div><div class="detail-value">{{ payment.get_payment_mode_display }}</div></div>
+        <div class="col-12 col-sm-6"><div class="detail-label">Transaction ID</div><div class="detail-value">{{ payment.transaction_id|default:'—' }}</div></div>
+        {% if payment.remarks %}<div class="col-12"><div class="detail-label">Remarks</div><div class="detail-value">{{ payment.remarks }}</div></div>{% endif %}
+    </div>
+    <div class="d-flex justify-content-between align-items-center border-top mt-4 pt-4"><span class="fw-semibold">Amount paid</span><span class="page-heading h4 mb-0">₹{{ payment.amount|floatformat:2 }}</span></div>
+    <div class="d-flex flex-column flex-sm-row gap-2 mt-4 d-print-none"><a class="btn btn-primary" href="{% url 'hostel:allocation_detail' payment.hostel_fee.allocation_id %}">Back to allocation</a><button class="btn btn-light" type="button" onclick="window.print()">Print receipt</button></div>
+</section></div></div>
+{% endblock %}

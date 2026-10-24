@@ -1,0 +1,64 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Issue inbox | College ERP{% endblock %}
+
+{% block content %}
+<div class="issue-heading">
+    <div>
+        <h1>Issue inbox</h1>
+        <p>Review submissions and update their status or send a response.</p>
+    </div>
+</div>
+{% if messages %}{% for message in messages %}<div class="notice">{{ message }}</div>{% endfor %}{% endif %}
+<div class="issue-list">
+    {% for issue in issues %}
+    <article class="issue-card">
+        <div class="issue-meta">
+            <span>{{ issue.get_category_display }} · {{ issue.created_by.get_full_name|default:issue.created_by.username }}</span>
+            <span class="status status-{{ issue.status|lower }}">{{ issue.get_status_display }}</span>
+        </div>
+        <h2>{{ issue.title }}</h2>
+        <p class="description">{{ issue.description|linebreaksbr }}</p>
+        <small>Submitted {{ issue.created_at|date:"d M Y, h:i A" }}</small>
+        <form method="post" action="{% url 'dashboard:issue_update' pk=issue.pk %}" class="update-form">
+            {% csrf_token %}
+            <label>Status
+                <select name="status">
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if issue.status == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Admin response
+                <textarea name="admin_note" maxlength="2000" rows="3">{{ issue.admin_note }}</textarea>
+            </label>
+            <button type="submit">Save update</button>
+        </form>
+    </article>
+    {% empty %}
+    <div class="empty-state">There are no issue reports to review.</div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .issue-heading h1 { margin-bottom: 6px; }
+    .issue-heading p, .issue-card small { color: #64748b; }
+    .issue-list { display: grid; gap: 14px; }
+    .issue-card, .empty-state { padding: 20px; background: white; border: 1px solid #e5e7eb; border-radius: 10px; }
+    .issue-meta { display: flex; justify-content: space-between; gap: 10px; color: #475569; font-weight: 700; }
+    .issue-card h2 { margin: 12px 0 6px; font-size: 19px; }
+    .description { color: #334155; line-height: 1.5; }
+    .status { border-radius: 30px; padding: 4px 10px; background: #e2e8f0; font-size: 12px; }
+    .status-open { color: #9a3412; background: #ffedd5; }
+    .status-in_progress { color: #1d4ed8; background: #dbeafe; }
+    .status-resolved { color: #166534; background: #dcfce7; }
+    .update-form { display: grid; grid-template-columns: minmax(150px, .4fr) minmax(240px, 1fr) auto; align-items: end; gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #e5e7eb; }
+    .update-form label { display: grid; gap: 6px; color: #475569; font-size: 13px; font-weight: 700; }
+    .update-form select, .update-form textarea { width: 100%; padding: 9px; border: 1px solid #cbd5e1; border-radius: 6px; font: inherit; }
+    .update-form button { border: 0; border-radius: 7px; padding: 10px 14px; color: white; background: #2563eb; font-weight: 700; cursor: pointer; }
+    .notice { margin-bottom: 14px; padding: 12px; border-radius: 7px; background: #dcfce7; color: #166534; }
+    @media (max-width: 700px) { .update-form { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}

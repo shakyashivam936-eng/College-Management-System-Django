@@ -1,0 +1,1049 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Sign In | College Portal</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* =========================
+           GLOBAL STYLES
+        ========================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #172554;
+
+            background:
+                radial-gradient(
+                    circle at 15% 30%,
+                    #dbeafe,
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at 90% 80%,
+                    #e9d5ff,
+                    transparent 35%
+                ),
+                #f8fafc;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+            min-height: 90px;
+            padding: 18px 6%;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: rgba(255, 255, 255, 0.92);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            font-size: 42px;
+        }
+
+        .brand h2 {
+            color: #172554;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .brand p {
+            margin-top: 4px;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .navbar-message {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 1100px;
+
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .login-card {
+            display: grid;
+            grid-template-columns: 0.88fr 1fr;
+
+            overflow: hidden;
+
+            background: #ffffff;
+            border: 1px solid #e0e7ff;
+            border-radius: 22px;
+
+            box-shadow:
+                0 25px 65px rgba(37, 99, 235, 0.13);
+        }
+
+        /* =========================
+           LEFT PANEL
+        ========================= */
+
+        .left-panel {
+            position: relative;
+            overflow: hidden;
+
+            padding: 45px 35px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    160deg,
+                    rgba(2, 132, 199, 0.97),
+                    rgba(67, 56, 202, 0.94)
+                ),
+                url("{% static 'images/college-campus.jpg' %}")
+                center / cover no-repeat;
+        }
+
+        .left-panel::before {
+            position: absolute;
+            content: "";
+
+            width: 280px;
+            height: 280px;
+
+            top: 30%;
+            right: -160px;
+
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.10);
+        }
+
+        .left-panel::after {
+            position: absolute;
+            content: "";
+
+            width: 250px;
+            height: 250px;
+
+            bottom: -170px;
+            left: -120px;
+
+            border: 40px solid rgba(255, 255, 255, 0.13);
+            border-radius: 50%;
+        }
+
+        .left-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .college-icon {
+            display: inline-flex;
+
+            width: 65px;
+            height: 65px;
+
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 22px;
+
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 17px;
+
+            background: rgba(255, 255, 255, 0.15);
+
+            font-size: 36px;
+        }
+
+        .left-panel h1 {
+            margin-bottom: 15px;
+
+            color: white;
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .left-description {
+            max-width: 320px;
+
+            color: #e0e7ff;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        /* FEATURES */
+
+        .features {
+            display: grid;
+            gap: 26px;
+
+            margin-top: 42px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .feature-icon {
+            display: flex;
+
+            width: 46px;
+            height: 46px;
+
+            flex-shrink: 0;
+
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 13px;
+
+            background: rgba(255, 255, 255, 0.13);
+
+            font-size: 23px;
+        }
+
+        .feature h3 {
+            margin-bottom: 5px;
+
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .feature p {
+            color: #e0e7ff;
+            font-size: 12px;
+        }
+
+        .left-quote {
+            margin-top: 60px;
+
+            color: white;
+            font-size: 25px;
+            font-weight: 800;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           RIGHT PANEL
+        ========================= */
+
+        .right-panel {
+            padding: 38px 40px;
+        }
+
+        .portal-badge {
+            display: inline-block;
+
+            margin-bottom: 20px;
+            padding: 8px 14px;
+
+            color: #1d4ed8;
+            background: #dbeafe;
+
+            border-radius: 30px;
+
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .right-panel h2 {
+            margin-bottom: 10px;
+
+            color: #172554;
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            margin-bottom: 25px;
+
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           ERROR MESSAGE
+        ========================= */
+
+        .error-box {
+            margin-bottom: 22px;
+            padding: 14px 15px;
+
+            border: 1px solid #fecaca;
+            border-radius: 11px;
+
+            color: #b91c1c;
+            background: #fef2f2;
+
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .error-box ul {
+            padding-left: 18px;
+        }
+
+        /* =========================
+           LOGIN FORM
+        ========================= */
+
+        .login-form p {
+            margin-bottom: 18px;
+        }
+
+        .login-form label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #1e293b;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .login-form input {
+            display: block;
+
+            width: 100%;
+            min-height: 52px;
+
+            padding: 13px 15px;
+
+            border: 1px solid #cbd5e1;
+            border-radius: 11px;
+
+            color: #172554;
+            background: #ffffff;
+
+            font-family: inherit;
+            font-size: 14px;
+
+            transition: 0.2s;
+        }
+
+        .login-form input:focus {
+            outline: none;
+
+            border-color: #6366f1;
+
+            box-shadow:
+                0 0 0 4px rgba(99, 102, 241, 0.12);
+        }
+
+        .login-form .helptext {
+            display: block;
+
+            margin-top: 6px;
+
+            color: #64748b;
+            font-size: 11px;
+        }
+
+        .login-form .errorlist {
+            margin: 5px 0;
+            padding: 0;
+
+            color: #dc2626;
+            font-size: 12px;
+            list-style: none;
+        }
+
+        /* PASSWORD FIELD */
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 65px;
+        }
+
+        .password-toggle {
+            position: absolute;
+
+            top: 50%;
+            right: 12px;
+
+            transform: translateY(-50%);
+
+            border: none;
+            background: transparent;
+
+            color: #4f46e5;
+            font-size: 12px;
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        /* REMEMBER ME */
+
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+
+            margin: 4px 0 22px;
+
+            font-size: 12px;
+        }
+
+        .remember-label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .remember-label input {
+            width: 16px;
+            height: 16px;
+            accent-color: #4f46e5;
+        }
+
+        .forgot-link {
+            color: #2563eb;
+            font-weight: 700;
+        }
+
+        /* =========================
+           SIGN IN BUTTON
+        ========================= */
+
+        .login-button {
+            width: 100%;
+            min-height: 54px;
+
+            border: none;
+            border-radius: 11px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    100deg,
+                    #2563eb,
+                    #4f46e5,
+                    #7c3aed
+                );
+
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 750;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 8px 20px rgba(79, 70, 229, 0.2);
+
+            transition: 0.2s;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 12px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        /* =========================
+           SOCIAL LOGIN
+        ========================= */
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            margin: 27px 0 20px;
+
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .social-buttons {
+            display: grid;
+            gap: 11px;
+        }
+
+        .social-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+
+            min-height: 53px;
+            padding: 12px 15px;
+
+            border: 1px solid #cbd5e1;
+            border-radius: 11px;
+
+            color: #334155;
+            background: white;
+
+            font-size: 13px;
+            font-weight: 650;
+
+            transition: 0.2s;
+        }
+
+        .social-button:hover {
+            border-color: #818cf8;
+            background: #f8faff;
+            color: #1e1b4b;
+        }
+
+        .social-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .social-icon {
+            width: 25px;
+            height: 25px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .google-icon {
+            color: #4285f4;
+        }
+
+        .facebook-icon {
+            color: #1877f2;
+            font-size: 27px;
+        }
+
+        .x-icon {
+            color: #111827;
+        }
+
+        .social-arrow {
+            color: #64748b;
+            font-size: 18px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .create-account {
+            margin-top: 26px;
+
+            color: #64748b;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .create-account a {
+            color: #2563eb;
+            font-weight: 750;
+        }
+
+        .create-account a:hover {
+            text-decoration: underline;
+        }
+
+        .security-note {
+            margin-top: 24px;
+
+            color: #64748b;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .footer {
+            padding: 0 20px 25px;
+
+            color: #64748b;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* =========================
+           RESPONSIVE DESIGN
+        ========================= */
+
+        @media (max-width: 850px) {
+
+            .login-wrapper {
+                max-width: 600px;
+                margin-top: 30px;
+            }
+
+            .login-card {
+                grid-template-columns: 1fr;
+            }
+
+            .left-panel {
+                padding: 30px;
+            }
+
+            .features {
+                gap: 18px;
+                margin-top: 28px;
+            }
+
+            .left-quote {
+                margin-top: 30px;
+                font-size: 22px;
+            }
+
+            .right-panel {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .navbar {
+                padding: 15px;
+            }
+
+            .brand-icon {
+                font-size: 32px;
+            }
+
+            .brand h2 {
+                font-size: 18px;
+            }
+
+            .brand p {
+                font-size: 10px;
+            }
+
+            .navbar-message {
+                display: none;
+            }
+
+            .login-wrapper {
+                margin-top: 20px;
+                padding: 0 12px;
+            }
+
+            .left-panel {
+                padding: 25px 22px;
+            }
+
+            .left-panel h1 {
+                font-size: 27px;
+            }
+
+            .right-panel {
+                padding: 25px 20px;
+            }
+
+            .right-panel h2 {
+                font-size: 27px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <header class="navbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">🎓</div>
+
+            <div>
+                <h2>College Portal</h2>
+                <p>Learn · Grow · Succeed</p>
+            </div>
+
+        </div>
+
+        <div class="navbar-message">
+            🏛 Your Future, Our Priority
+        </div>
+
+    </header>
+
+    <!-- LOGIN PAGE -->
+
+    <main class="login-wrapper">
+
+        <div class="login-card">
+
+            <!-- LEFT PANEL -->
+
+            <section class="left-panel">
+
+                <div class="left-content">
+
+                    <div class="college-icon">🎓</div>
+
+                    <h1>College Portal</h1>
+
+                    <p class="left-description">
+                        Your academic journey, made easier.
+                    </p>
+
+                    <div class="features">
+
+                        <div class="feature">
+
+                            <div class="feature-icon">📚</div>
+
+                            <div>
+                                <h3>Access your courses</h3>
+                                <p>Learn at your own pace</p>
+                            </div>
+
+                        </div>
+
+                        <div class="feature">
+
+                            <div class="feature-icon">📅</div>
+
+                            <div>
+                                <h3>Track your progress</h3>
+                                <p>Stay on top of deadlines</p>
+                            </div>
+
+                        </div>
+
+                        <div class="feature">
+
+                            <div class="feature-icon">👥</div>
+
+                            <div>
+                                <h3>Connect with community</h3>
+                                <p>Build your network</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="left-quote">
+                        Better Education<br>
+                        Brighter Future.
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- RIGHT PANEL -->
+
+            <section class="right-panel">
+
+                <span class="portal-badge">
+                    COLLEGE PORTAL
+                </span>
+
+                <h2>Welcome back 👋</h2>
+
+                <p class="subtitle">
+                    Sign in to continue to your account.
+                </p>
+
+                <!-- DJANGO ERROR MESSAGE -->
+
+                {% if form.non_field_errors or form.errors %}
+
+                    <div class="error-box" role="alert">
+
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% empty %}
+                            Please check your username and password and try again.
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+                <!-- LOGIN FORM -->
+
+                <form method="post"
+                      class="login-form"
+                      novalidate>
+
+                    {% csrf_token %}
+
+                    {% for field in form %}
+
+                        <p>
+
+                            {{ field.label_tag }}
+
+                            {% if field.name == "password" %}
+
+                                <div class="password-wrapper">
+
+                                    {{ field }}
+
+                                    <button
+                                        type="button"
+                                        class="password-toggle"
+                                        onclick="togglePassword()"
+                                        id="passwordToggle">
+
+                                        Show
+
+                                    </button>
+
+                                </div>
+
+                            {% else %}
+
+                                {{ field }}
+
+                            {% endif %}
+
+                            {% if field.help_text %}
+
+                                <span class="helptext">
+                                    {{ field.help_text|safe }}
+                                </span>
+
+                            {% endif %}
+
+                            {% for error in field.errors %}
+
+                                <span class="errorlist">
+                                    {{ error }}
+                                </span>
+
+                            {% endfor %}
+
+                        </p>
+
+                    {% endfor %}
+
+                    <div class="form-options">
+
+                        <label class="remember-label">
+
+                            <input
+                                type="checkbox"
+                                name="remember_me">
+
+                            Remember me
+
+                        </label>
+
+                        <a href="#"
+                           class="forgot-link"
+                           onclick="alert('Please contact your college administrator to reset your password.'); return false;">
+
+                            Forgot password?
+
+                        </a>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="login-button">
+
+                        ⇥ &nbsp; Sign in
+
+                    </button>
+
+                </form>
+
+                <!-- SOCIAL LOGIN -->
+
+                <div class="divider">
+                    OR CONTINUE WITH
+                </div>
+
+                <div class="social-buttons">
+
+                    <!-- GOOGLE -->
+
+                    <a
+                        href="{% url 'google_login' %}"
+                        class="social-button">
+
+                        <span class="social-left">
+
+                            <span class="social-icon google-icon">
+                                G
+                            </span>
+
+                            Continue with Google
+
+                        </span>
+
+                        <span class="social-arrow">→</span>
+
+                    </a>
+
+                    <!-- FACEBOOK -->
+
+                    <a
+                        href="{% url 'facebook_login' %}"
+                        class="social-button">
+
+                        <span class="social-left">
+
+                            <span class="social-icon facebook-icon">
+                                f
+                            </span>
+
+                            Continue with Facebook
+
+                        </span>
+
+                        <span class="social-arrow">→</span>
+
+                    </a>
+
+                    <!-- X / TWITTER -->
+
+                    <a
+                        href="{% url 'twitter_login' %}"
+                        class="social-button">
+
+                        <span class="social-left">
+
+                            <span class="social-icon x-icon">
+                                𝕏
+                            </span>
+
+                            Continue with X (Twitter)
+
+                        </span>
+
+                        <span class="social-arrow">→</span>
+
+                    </a>
+
+                </div>
+
+                <!-- REGISTER LINK -->
+
+                <p class="create-account">
+
+                    New here?
+
+                    <a href="{% url 'register' %}">
+                        Create an account
+                    </a>
+
+                </p>
+
+                <div class="security-note">
+                    🔒 Authorized users only
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        © {% now "Y" %} College Management System. All rights reserved.
+    </footer>
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        function togglePassword() {
+
+            const passwordInput = document.querySelector(
+                '.password-wrapper input'
+            );
+
+            const toggleButton = document.getElementById(
+                'passwordToggle'
+            );
+
+            if (!passwordInput || !toggleButton) {
+                return;
+            }
+
+            if (passwordInput.type === 'password') {
+
+                passwordInput.type = 'text';
+                toggleButton.textContent = 'Hide';
+
+            } else {
+
+                passwordInput.type = 'password';
+                toggleButton.textContent = 'Show';
+
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

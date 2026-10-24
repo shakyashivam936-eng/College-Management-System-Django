@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ admission.application_number }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a class="link-secondary text-decoration-none small" href="{% url 'admission_list' %}">← Back to applications</a>
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-3 mt-3">
+        <div>
+            <p class="text-primary fw-semibold text-uppercase small mb-2">Admission application</p>
+            <h1 class="page-heading h2 mb-1">{{ admission.application_number }}</h1>
+            <p class="text-secondary mb-0">{{ admission.first_name }} {{ admission.last_name }} · {{ admission.course.name }}</p>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="badge rounded-pill text-bg-primary-subtle text-primary-emphasis px-3 py-2">{{ admission.get_status_display }}</span>
+            <a class="btn btn-primary" href="{% url 'admission_review' admission.id %}">Review application</a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-12 col-lg-8">
+        <section class="card p-4 p-md-5 mb-4">
+            <h2 class="page-heading h5 mb-4">Personal information</h2>
+            {% if admission.profile_photo %}<div class="mb-4"><img src="{{ admission.profile_photo.url }}" alt="Photo of {{ admission.first_name }} {{ admission.last_name }}" class="rounded-circle object-fit-cover" width="112" height="112"></div>{% endif %}
+            <div class="row g-4">
+                <div class="col-12 col-md-6"><div class="detail-label">Applicant</div><div class="detail-value">{{ admission.first_name }} {{ admission.last_name }}</div></div>
+                <div class="col-12 col-md-6"><div class="detail-label">Date of birth</div><div class="detail-value">{{ admission.date_of_birth|date:'M j, Y' }}</div></div>
+                <div class="col-12 col-md-6"><div class="detail-label">Father’s name</div><div class="detail-value">{{ admission.father_name }}</div></div>
+                <div class="col-12 col-md-6"><div class="detail-label">Mother’s name</div><div class="detail-value">{{ admission.mother_name }}</div></div>
+                <div class="col-12 col-md-6"><div class="detail-label">Gender</div><div class="detail-value">{{ admission.get_gender_display }}</div></div>
+            </div>
+        </section>
+        <section class="card p-4 p-md-5">
+            <h2 class="page-heading h5 mb-4">Academic information</h2>
+            <div class="row g-4">
+                <div class="col-12 col-md-6"><div class="detail-label">Applied course</div><div class="detail-value">{{ admission.course.name }}</div></div>
+                <div class="col-12 col-md-6"><div class="detail-label">Previous school</div><div class="detail-value">{{ admission.previous_school|default:'—' }}</div></div>
+                <div class="col-12 col-md-4"><div class="detail-label">High school marks</div><div class="detail-value">{% if admission.high_school_marks != None %}{{ admission.high_school_marks }}%{% else %}—{% endif %}</div></div>
+                <div class="col-12 col-md-4"><div class="detail-label">Intermediate marks</div><div class="detail-value">{% if admission.intermediate_marks != None %}{{ admission.intermediate_marks }}%{% else %}—{% endif %}</div></div>
+                <div class="col-12 col-md-4"><div class="detail-label">Passing year</div><div class="detail-value">{{ admission.passing_year|default:'—' }}</div></div>
+            </div>
+        </section>
+    </div>
+    <div class="col-12 col-lg-4">
+        <section class="card p-4 mb-4">
+            <h2 class="page-heading h5 mb-4">Contact details</h2>
+            <div class="mb-3"><div class="detail-label">Email</div><div class="detail-value text-break">{{ admission.email }}</div></div>
+            <div class="mb-3"><div class="detail-label">Phone</div><div class="detail-value">{{ admission.phone }}</div></div>
+            <div><div class="detail-label">Address</div><div class="detail-value">{{ admission.address }}, {{ admission.city }}, {{ admission.state }} {{ admission.pincode }}</div></div>
+        </section>
+        <section class="card p-4">
+            <h2 class="page-heading h5 mb-3">Documents</h2>
+            <div class="list-group list-group-flush">
+                {% if admission.profile_photo %}<a class="list-group-item list-group-item-action px-0" href="{{ admission.profile_photo.url }}" target="_blank" rel="noopener">View profile photo <span class="float-end">↗</span></a>{% endif %}
+                {% if admission.high_school_marksheet %}<a class="list-group-item list-group-item-action px-0" href="{{ admission.high_school_marksheet.url }}" target="_blank" rel="noopener">High school marksheet <span class="float-end">↗</span></a>{% endif %}
+                {% if admission.intermediate_marksheet %}<a class="list-group-item list-group-item-action px-0" href="{{ admission.intermediate_marksheet.url }}" target="_blank" rel="noopener">Intermediate marksheet <span class="float-end">↗</span></a>{% endif %}
+                {% if admission.identity_proof %}<a class="list-group-item list-group-item-action px-0" href="{{ admission.identity_proof.url }}" target="_blank" rel="noopener">Identity proof <span class="float-end">↗</span></a>{% endif %}
+                {% if admission.transfer_certificate %}<a class="list-group-item list-group-item-action px-0" href="{{ admission.transfer_certificate.url }}" target="_blank" rel="noopener">Transfer certificate <span class="float-end">↗</span></a>{% endif %}
+                {% if not admission.profile_photo and not admission.high_school_marksheet and not admission.intermediate_marksheet and not admission.identity_proof and not admission.transfer_certificate %}<p class="text-secondary small mb-0">No documents attached.</p>{% endif %}
+            </div>
+        </section>
+        {% if admission.status == 'REJECTED' and admission.rejection_reason %}<section class="alert alert-danger mt-4 mb-0"><h2 class="h6 fw-semibold">Rejection reason</h2><p class="mb-0">{{ admission.rejection_reason }}</p></section>{% endif %}
+    </div>
+</div>
+{% endblock %}
